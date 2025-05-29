@@ -1195,7 +1195,7 @@ select#grade:focus {
             .replace(/'/g, '&#039;');
     }
 
-    const API_BASE_URL = 'http://localhost:5000/api/teacher-apply';
+    const API_BASE_URL = 'https://api.dearsirhometuition.com/api/teacher-apply';
 
     // Utility function to handle API responses
     async function handleApiResponse(response) {
@@ -1495,7 +1495,7 @@ select#grade:focus {
             submitFormData.append('cv', cvFile);
 
             // Send request to server
-            const response = await fetch('http://localhost:5000/api/teacher-apply/signup', {
+            const response = await fetch('https://api.dearsirhometuition.com/api/teacher-apply/signup', {
                 method: 'POST',
                 body: submitFormData,
                 // Remove any headers that might interfere with FormData

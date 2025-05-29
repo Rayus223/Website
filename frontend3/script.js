@@ -254,7 +254,7 @@ function updateNavButtons() {
 async function loadVacancies() {
   try {
     // Use a configurable API base URL with fallback to localhost
-    const apiBaseUrl = window.API_BASE_URL || 'http://localhost:5000';
+    const apiBaseUrl = window.API_BASE_URL || 'https://api.dearsirhometuition.com';
     console.log('Using API base URL:', apiBaseUrl);
     
     // Add cache-busting query parameter
@@ -581,7 +581,7 @@ async function handleVacancyApply(button) {
   }
 
   try {
-    const response = await fetch(`http://localhost:5000/api/teacher-apply/apply-vacancy/${vacancyId}`, {
+    const response = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/apply-vacancy/${vacancyId}`, {
       method: 'POST',
       headers: {
         'Authorization': `Bearer ${token}`,

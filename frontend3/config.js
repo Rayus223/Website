@@ -1,4 +1,4 @@
-const API_BASE_URL = 'http://localhost:5000';
+const API_BASE_URL = 'https://api.dearsirhometuition.com';
 
 // Export the configuration
 export const config = {

@@ -539,7 +539,7 @@
         
         async function fetchVacancyDetails(vacancyId) {
             try {
-                const response = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/vacancies/${vacancyId}`);
+                const response = await fetch(`${window.API_BASE_URL || 'https://api.dearsirhometuition.com'}/api/vacancies/${vacancyId}`);
                 
                 if (!response.ok) {
                     throw new Error('Failed to fetch vacancy details');
@@ -716,7 +716,7 @@
                 });
                 
                 // First get the vacancy details to check if already applied
-                const vacancyResponse = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/vacancies/${vacancyId}`, {
+                const vacancyResponse = await fetch(`${window.API_BASE_URL || 'https://api.dearsirhometuition.com'}/api/vacancies/${vacancyId}`, {
                     headers: {
                         'Authorization': `Bearer ${token}`,
                         'Content-Type': 'application/json'
@@ -756,7 +756,7 @@
                     return;
                 }
                 
-                const response = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/teacher-apply/apply-vacancy/${vacancyId}`, {
+                const response = await fetch(`${window.API_BASE_URL || 'https://api.dearsirhometuition.com'}/api/teacher-apply/apply-vacancy/${vacancyId}`, {
                     method: 'POST',
                     headers: {
                         'Authorization': `Bearer ${token}`,

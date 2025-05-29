@@ -388,7 +388,7 @@
         try {
             console.log('Checking existing login token...');
             // Verify token is still valid
-            const response = await fetch('http://localhost:5000/api/teacher-apply/verify-token', {
+            const response = await fetch('https://api.dearsirhometuition.com/api/teacher-apply/verify-token', {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -458,7 +458,7 @@
         try {
             // First check if user is registered
             console.log('Checking if user is registered...');
-            const checkResponse = await fetch(`http://localhost:5000/api/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
+            const checkResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
             
             if (!checkResponse.ok) {
                 console.error('Registration check failed with status:', checkResponse.status);
@@ -476,7 +476,7 @@
 
             // Proceed with login if registered
             console.log('User is registered, attempting login...');
-            const loginResponse = await fetch(`http://localhost:5000/api/teacher-apply/login`, {
+            const loginResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -554,7 +554,7 @@
 
         try {
             // Check if user is registered before sending reset link
-            const checkResponse = await fetch(`http://localhost:5000/api/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
+            const checkResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
             const checkData = await checkResponse.json();
 
             if (!checkData.isRegistered) {
@@ -565,7 +565,7 @@
             }
 
             // Send reset password request
-            const response = await fetch(`http://localhost:5000/api/teacher-apply/reset-password`, {
+            const response = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/reset-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
