@@ -1291,7 +1291,7 @@
         async function loadAllVacancies() {
             try {
                 vacanciesGrid.innerHTML = `<div class="vacancy-card"><div class="vacancy-card-loader" role="status" aria-live="polite">Loading available tuition jobs...</div></div>`;
-                const apiBaseUrl = window.API_BASE_URL || 'http://127.0.0.1:5000'; // Updated to use 127.0.0.1 instead of localhost
+                const apiBaseUrl = window.API_BASE_URL || 'https://api.dearsirhometuition.com'; // Updated to use 127.0.0.1 instead of localhost
                 const cacheBuster = `?_=${Date.now()}`;
                 console.log(`Fetching vacancies from: ${apiBaseUrl}/api/vacancies/available-vacancies${cacheBuster}`);
                 
