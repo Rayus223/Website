@@ -1,0 +1,527 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DXKBVVB6PF');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>School Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Back Arrow Button -->
+        <div class="back-arrow" onclick="window.location.href='../index.html'">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </div>
+
+        <div class="form-container">
+            <h1>School Registration</h1>
+            <p class="form-description">Welcome! Please fill out the form below to register your school.</p>
+
+            <form id="schoolForm" class="application-form">
+                <!-- School Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-school"></i> School Information</h3>
+                    <div class="form-group">
+                        <input type="text" id="schoolName" required>
+                        <label for="schoolName">Name of School</label>
+                    </div>
+                </div>
+
+                <!-- Contact Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                    <div class="form-group">
+                        <input type="tel" id="phone" required>
+                        <label for="phone">Contact Number</label>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="location" required></textarea>
+                        <label for="location">School Location</label>
+                    </div>
+                </div>
+
+                <!-- Subject Requirements -->
+                <div class="form-section">
+                    <h3><i class="fas fa-book"></i> Subject Requirements</h3>
+                    <div class="form-group">
+                        <label class="subject-label">Select Required Subjects</label>
+                        <div class="subject-grid" id="subjectGrid">
+                            <!-- Subjects will be dynamically populated here -->
+                        </div>
+                        <input type="hidden" id="subjects" required>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>Submit Registration</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        /* Copy all styles from parent.html */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .form-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h3 {
+            color: #185a9d;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        
+                    .subject-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 500;
+            position: static;
+            }
+
+            .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            background: #f8fbff;
+            padding: 20px;
+            border-radius: 15px;
+            }
+
+            .subject-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            }
+
+            .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .subject-card.selected {
+            background: #56e3b7;
+            color: white;
+            border-color: transparent;
+            }
+
+            .subject-card i {
+            font-size: 1.2em;
+            }
+
+            .subject-card.selected i {
+            color: white;
+            }
+
+
+
+
+
+
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #43cea2;
+            outline: none;
+        }
+
+        label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: #666;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        input:focus ~ label,
+        input:valid ~ label,
+        textarea:focus ~ label,
+        textarea:valid ~ label {
+            top: -20px;
+            left: 0;
+            font-size: 14px;
+            color: #43cea2;
+        }
+
+        select {
+            cursor: pointer;
+            color: #666;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-arrow {
+            position: relative;
+            padding: 7px 10px;
+            margin: 1px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-arrow:hover {
+            transform: translateX(-5px);
+        }
+
+        /*for science and management */
+
+
+
+
+                    .stream-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fbff;
+            border-radius: 15px;
+            max-width: 100%;
+            }
+
+                        .stream-column {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            height: 100%;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+                    .stream-title {
+        color: #185a9d;
+        font-size: 1.2em;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        }
+
+            .stream-subjects {
+            display: grid;
+            gap: 12px;
+            }
+
+                        /* Responsive design for mobile */
+            @media (max-width: 768px) {
+            .stream-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stream-column {
+                margin-bottom: 20px;
+            }
+            }
+
+
+            .custom-subject-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+                    
+                        #customSubjectsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 5px;
+            }
+
+         .custom-subject-input input {
+            
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 14px;
+            }
+
+                        .custom-subject-input button {
+            padding: 8px 20px;
+            background: #00c896;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            min-width: 80px;
+            }
+
+            .custom-subject-input button:hover {
+            background: #00b085;
+            }
+
+                        .remove-subject {
+            margin-left: auto;
+            cursor: pointer;
+            color: #666;
+            }
+
+            .remove-subject:hover {
+            color: #ff4444;
+            }
+                   
+
+            /* Update responsive design */
+            @media (max-width: 992px) {
+            .stream-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            }
+
+            @media (max-width: 768px) {
+            .stream-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stream-column {
+                margin-bottom: 20px;
+            }
+            }
+
+
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .form-section {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .form-description {
+                font-size: 14px;
+            }
+        }
+
+    </style>
+
+    <script>
+        // Modified script for school subjects
+        function getSubjectIcon(subject) {
+            const icons = {
+                'Mathematics': 'fas fa-square-root-alt',
+                'Science': 'fas fa-flask',
+                'English': 'fas fa-book-open',
+                'Social Studies': 'fas fa-globe',
+                'Computer Science': 'fas fa-laptop-code',
+                'Physics': 'fas fa-atom',
+                'Chemistry': 'fas fa-vial',
+                'Biology': 'fas fa-dna',
+                'Economics': 'fas fa-chart-line',
+                'Accounting': 'fas fa-calculator',
+                'Business Studies': 'fas fa-briefcase',
+                'Other': 'fas fa-book'
+            };
+            return icons[subject] || 'fas fa-book';
+        }
+
+        function initializeSubjects() {
+            const subjects = [
+                'Mathematics', 'Science', 'English', 'Social Studies',
+                'Computer Science', 'Physics', 'Chemistry', 'Biology',
+                'Economics', 'Accounting', 'Business Studies', 'Other'
+            ];
+
+            const subjectGrid = document.getElementById('subjectGrid');
+            const hiddenSubjectInput = document.getElementById('subjects');
+            let selectedSubjects = [];
+
+            subjects.forEach(subject => {
+                const card = document.createElement('div');
+                card.className = 'subject-card';
+                card.innerHTML = `
+                    <i class="${getSubjectIcon(subject)}"></i>
+                    <span>${subject}</span>
+                `;
+
+                card.addEventListener('click', () => {
+                    card.classList.toggle('selected');
+                    
+                    if (card.classList.contains('selected')) {
+                        selectedSubjects.push(subject);
+                    } else {
+                        selectedSubjects = selectedSubjects.filter(s => s !== subject);
+                    }
+                    
+                    hiddenSubjectInput.value = selectedSubjects.join(',');
+                });
+
+                subjectGrid.appendChild(card);
+            });
+        }
+
+        // Initialize subjects when page loads
+        document.addEventListener('DOMContentLoaded', initializeSubjects);
+
+        // Form submission handler
+        document.getElementById('schoolForm').addEventListener('submit', async function(e) {
+            e.preventDefault();
+            
+            if (!document.getElementById('subjects').value) {
+                alert('Please select at least one subject');
+                return;
+            }
+            
+            const formData = {
+                schoolName: document.getElementById('schoolName').value,
+                phone: document.getElementById('phone').value,
+                location: document.getElementById('location').value,
+                subjects: document.getElementById('subjects').value.split(',')
+            };
+
+            try {
+                const response = await fetch('http://localhost:5000/api/schools/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    alert('Registration submitted successfully!');
+                    this.reset();
+                } else {
+                    alert('Error: ' + data.message);
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                alert('Error submitting form. Please try again.');
+            }
+        });
+    </script>
+</body>
+</html> 

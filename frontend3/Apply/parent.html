@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+ <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+
+    gtag('config', 'G-DXKBVVB6PF');
+  </script>
+  
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Parent Registration</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../config.js"></script>
+</head>
+<body>
+    <div class="container">
+        <!-- Back Arrow Button -->
+        <div class="back-arrow" onclick="window.location.href='../index.html'">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </div>
+
+        <div class="form-container">
+            <h1>Parent Registration</h1>
+            <p class="form-description">Welcome! Please fill out the form below to register as a parent.</p>
+
+            <form id="parentForm" class="application-form" novalidate>
+                <!-- Captcha/Verification Section - Will appear after multiple submissions -->
+                <div id="verificationSection" class="form-section" style="display: none;">
+                    <h3><i class="fas fa-shield-alt"></i> Verification</h3>
+                    <p class="verification-message">We've noticed multiple submissions from this device. Please complete the verification below:</p>
+                    <div class="form-group verification-group">
+                        <label for="verificationCode" class="radio-group-label">Please enter the code: <span id="captchaText"></span></label>
+                        <input type="text" id="verificationCode" placeholder="Enter code">
+                    </div>
+                </div>
+
+                <!-- Parent Information -->
+                <div class="form-section">
+                  <h3><i class="fas fa-user"></i> Parent Information</h3>
+                  <div class="form-group">
+                    <input type="text" id="parentName">
+                    <label for="parentName">Parent's Full Name</label>
+                  </div>
+                </div>
+              
+                <!-- Contact Information -->
+                <div class="form-section">
+                  <h3><i class="fas fa-address-card"></i> Contact Information</h3>
+                  <div class="form-group">
+                    <input type="tel" id="phone">
+                    <label for="phone">Phone Number</label>
+                  </div>
+                  <div class="form-group">
+                    <textarea id="address"></textarea>
+                    <label for="address">Full Address</label>
+                  </div>
+                  <div class="form-group">
+                    <input type="text" id="salary">
+                    <label for="salary">Salary Expectation (Optional)</label>
+                  </div>
+                </div>
+
+                            <!-- Student Information -->
+                <div class="form-section">
+                    <h3><i class="fas fa-graduation-cap"></i> Student Information</h3>
+                    <div class="form-group">
+                        <label class="radio-group-label">Preferred Teacher</label>
+                        <div class="radio-group">
+                            <div class="radio-option">
+                                <input type="radio" id="male" name="preferredTeacher" value="male">
+                                <label for="male">Male</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="female" name="preferredTeacher" value="female">
+                                <label for="female">Female</label>
+                            </div>
+                            <div class="radio-option">
+                                <input type="radio" id="any" name="preferredTeacher" value="any">
+                                <label for="any">Any</label>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                    <select id="grade">
+                        <option value="" disabled selected>Select Grade</option>
+                        <option value="1">Grade 1</option>
+                        <option value="2">Grade 2</option>
+                        <option value="3">Grade 3</option>
+                        <option value="4">Grade 4</option>
+                        <option value="5">Grade 5</option>
+                        <option value="6">Grade 6</option>
+                        <option value="7">Grade 7</option>
+                        <option value="8">Grade 8</option>
+                        <option value="9">Grade 9</option>
+                        <option value="10">Grade 10</option>
+                        <option value="11">Grade 11</option>
+                        <option value="12">Grade 12</option>
+                    </select>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="subject-label">Select Subject</label>
+                        <div class="subject-grid" id="subjectGrid">
+                          <!-- Subjects will be dynamically populated here -->
+                        </div>
+                        <input type="hidden" id="subject">
+                      </div>
+
+                    <div class="form-group">
+                    <input type="text" id="preferredTime">
+                    <label for="preferredTime">Preferred Time</label>
+                    </div>
+                </div>
+
+                <button type="submit" class="submit-btn">
+                    <span>Submit Registration</span>
+                    <i class="fas fa-arrow-right"></i>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .form-container {
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5em;
+        }
+
+        .form-description {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+
+        .form-section {
+            background: #fff;
+            padding: 25px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-section h3 {
+            color: #185a9d;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+
+        
+                    .subject-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #333;
+            font-size: 1.2em;
+            font-weight: 500;
+            position: static;
+            }
+
+            .subject-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+            background: #f8fbff;
+            padding: 20px;
+            border-radius: 15px;
+            }
+
+            .subject-card {
+            background: #ffffff;
+            border: 1px solid #e8e8e8;
+            border-radius: 12px;
+            padding: 15px 20px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            }
+
+            .subject-card:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            }
+
+            .subject-card.selected {
+            background: #56e3b7;
+            color: white;
+            border-color: transparent;
+            }
+
+            .subject-card i {
+            font-size: 1.2em;
+            }
+
+            .subject-card.selected i {
+            color: white;
+            }
+
+
+
+
+
+
+
+        .form-group {
+            margin-bottom: 20px;
+            position: relative;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            border-color: #43cea2;
+            outline: none;
+        }
+
+        label {
+            position: absolute;
+            left: 12px;
+            top: 12px;
+            color: #666;
+            transition: all 0.3s ease;
+            pointer-events: none;
+        }
+
+        input:focus ~ label,
+        input:valid ~ label,
+        textarea:focus ~ label,
+        textarea:valid ~ label {
+            top: -20px;
+            left: 0;
+            font-size: 14px;
+            color: #43cea2;
+        }
+
+        select {
+            cursor: pointer;
+            color: #666;
+        }
+
+        textarea {
+            height: 100px;
+            resize: vertical;
+        }
+
+        .submit-btn {
+            width: 100%;
+            padding: 15px;
+            background: linear-gradient(135deg, #43cea2, #185a9d);
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .back-arrow {
+            position: relative;
+            padding: 7px 10px;
+            margin: 1px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .back-arrow:hover {
+            transform: translateX(-5px);
+        }
+
+        /*for science and management */
+
+
+
+
+                    .stream-container {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 30px;
+            margin-top: 20px;
+            padding: 20px;
+            background: #f8fbff;
+            border-radius: 15px;
+            max-width: 100%;
+            }
+
+                        .stream-column {
+            background: #ffffff;
+            border-radius: 15px;
+            padding: 25px;
+            height: 100%;
+            min-height: 300px;
+            display: flex;
+            flex-direction: column;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+            }
+
+                    .stream-title {
+        color: #185a9d;
+        font-size: 1.2em;
+        font-weight: 600;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #f0f0f0;
+        }
+
+            .stream-subjects {
+            display: grid;
+            gap: 12px;
+            }
+
+                        /* Responsive design for mobile */
+            @media (max-width: 768px) {
+            .stream-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stream-column {
+                margin-bottom: 20px;
+            }
+            }
+
+
+            .custom-subject-input {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-bottom: 15px;
+  width: 100%;
+}
+
+                    
+                        #customSubjectsList {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin-top: 5px;
+            }
+
+         .custom-subject-input input {
+            
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #e8e8e8;
+            border-radius: 8px;
+            font-size: 14px;
+            }
+
+                        .custom-subject-input button {
+            padding: 8px 20px;
+            background: #00c896;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-size: 14px;
+            min-width: 80px;
+            }
+
+            .custom-subject-input button:hover {
+            background: #00b085;
+            }
+
+                        .remove-subject {
+            margin-left: auto;
+            cursor: pointer;
+            color: #666;
+            }
+
+            .remove-subject:hover {
+            color: #ff4444;
+            }
+                   
+
+            /* Update responsive design */
+            @media (max-width: 992px) {
+            .stream-container {
+                grid-template-columns: 1fr 1fr;
+            }
+            }
+
+            @media (max-width: 768px) {
+            .stream-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .stream-column {
+                margin-bottom: 20px;
+            }
+            }
+
+
+
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .form-container {
+                padding: 20px;
+            }
+
+            h1 {
+                font-size: 2em;
+            }
+
+            .form-section {
+                padding: 15px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            body {
+                padding: 20px 10px;
+            }
+
+            h1 {
+                font-size: 1.8em;
+            }
+
+            .form-description {
+                font-size: 14px;
+            }
+        }
+
+        .radio-group-label {
+            display: block;
+            margin-bottom: 15px;
+            color: #333;
+            position: static;
+            font-size: 1.2em;
+            font-weight: 500;
+        }
+
+        .radio-group {
+            display: flex;
+            gap: 30px;
+            padding: 15px 0;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .radio-option input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            margin: 0;
+        }
+
+        .radio-option label {
+            position: static;
+            color: #666;
+            cursor: pointer;
+            font-size: 1.3em;
+            padding: 5px 0;
+        }
+
+        .radio-option input[type="radio"]:checked + label {
+            color: #43cea2;
+            font-weight: 600;
+        }
+
+        .verification-message {
+            background-color: #fff8e6;
+            border-left: 4px solid #ffb300;
+            padding: 12px 15px;
+            margin-bottom: 20px;
+            border-radius: 5px;
+            font-size: 14px;
+            color: #775600;
+        }
+
+        .verification-group {
+            background-color: #f8fbff;
+            padding: 20px;
+            border-radius: 10px;
+            border: 1px dashed #d0e3ff;
+        }
+
+        #captchaText {
+            font-family: 'Courier New', monospace;
+            font-weight: bold;
+            letter-spacing: 2px;
+            background-color: #e9f5ff;
+            padding: 5px 10px;
+            border-radius: 5px;
+            margin-left: 8px;
+            font-size: 18px;
+            color: #185a9d;
+        }
+
+        #verificationCode {
+            max-width: 180px;
+            text-align: center;
+            letter-spacing: 2px;
+            font-weight: bold;
+            font-size: 18px;
+        }
+    </style>
+
+<script>
+    // Submission tracking logic - Add at beginning of script section
+    function checkSubmissionCount() {
+        // Get current submission count
+        let submissions = localStorage.getItem('parentFormSubmissions');
+        if (!submissions) {
+            submissions = { count: 0, lastSubmission: null };
+        } else {
+            submissions = JSON.parse(submissions);
+        }
+
+        // Check if 24 hours have passed since last submission
+        if (submissions.lastSubmission) {
+            const lastSubmissionTime = new Date(submissions.lastSubmission);
+            const currentTime = new Date();
+            const hoursDiff = (currentTime - lastSubmissionTime) / (1000 * 60 * 60);
+
+            // Reset counter if 24 hours have passed
+            if (hoursDiff > 24) {
+                submissions = { count: 0, lastSubmission: null };
+                localStorage.setItem('parentFormSubmissions', JSON.stringify(submissions));
+            }
+        }
+
+        // Show verification if more than 2 submissions
+        if (submissions.count >= 2) {
+            showVerification();
+        }
+
+        return submissions;
+    }
+
+    function showVerification() {
+        const verificationSection = document.getElementById('verificationSection');
+        verificationSection.style.display = 'block';
+        
+        // Generate random code
+        const captchaText = document.getElementById('captchaText');
+        const code = Math.floor(1000 + Math.random() * 9000); // 4-digit code
+        captchaText.textContent = code;
+        
+        // Store in session for verification
+        sessionStorage.setItem('captchaCode', code);
+    }
+
+    function incrementSubmissionCount() {
+        let submissions = localStorage.getItem('parentFormSubmissions');
+        if (!submissions) {
+            submissions = { count: 0, lastSubmission: null };
+        } else {
+            submissions = JSON.parse(submissions);
+        }
+
+        submissions.count += 1;
+        submissions.lastSubmission = new Date().toISOString();
+        localStorage.setItem('parentFormSubmissions', JSON.stringify(submissions));
+
+        return submissions;
+    }
+
+    // Check submission count when page loads
+    document.addEventListener('DOMContentLoaded', function() {
+        checkSubmissionCount();
+        
+        // Initialize the subject grid when page loads
+        document.getElementById('grade').addEventListener('change', updateSubjects);
+        
+        // If grade is already selected, update subjects right away
+        if (document.getElementById('grade').value) {
+            updateSubjects();
+        }
+    });
+
+    function getSubjectIcon(subject) {
+      const icons = {
+        // Existing icons
+        'Math': 'fas fa-square-root-alt',
+        'Science': 'fas fa-flask',
+        'Samajik': 'fas fa-globe',
+        'Opt. Math': 'fas fa-calculator',
+        'Account': 'fas fa-book',
+        'Computer': 'fas fa-laptop',
+        'Nepali': 'fas fa-language',
+        'English': 'fas fa-book-open',
+        'Other': 'fas fa-shapes',
+        'All Guidance': 'fas fa-chalkboard-teacher',
+        // New icons for 11-12
+        'Physics': 'fas fa-atom',
+        'Chemistry': 'fas fa-vial',
+        'Mathematics': 'fas fa-square-root-alt',
+        'Economics': 'fas fa-chart-line',
+        'Business Math': 'fas fa-calculator',
+        'Social': 'fas fa-users',
+        'Others': 'fas fa-ellipsis-h'
+      };
+      return icons[subject] || 'fas fa-book';
+    }
+    
+    function updateSubjects() {
+      const grade = document.getElementById('grade').value;
+      const subjectGrid = document.getElementById('subjectGrid');
+      const hiddenSubjectInput = document.getElementById('subject');
+      let selectedSubjects = [];
+      
+      // Clear existing options
+      subjectGrid.innerHTML = '';
+      hiddenSubjectInput.value = '';
+      
+      if (grade >= 1 && grade <= 10) {
+        // Existing code for grades 1-10
+        const subjects = [
+          , 'All Guidance','Math', 'Science', 'Samajik', 'Opt. Math', 'Account',
+          'Computer', 'Nepali', 'English', 'Other'
+        ];
+        renderSubjectCards(subjects, subjectGrid, selectedSubjects, hiddenSubjectInput);
+      } 
+      else if (grade >= 11 && grade <= 12) {
+        // Create stream-based layout
+        subjectGrid.innerHTML = `
+      <div class="stream-container">
+        <div class="stream-column">
+          <h3 class="stream-title">Science</h3>
+          <div class="stream-subjects" id="scienceSubjects"></div>
+        </div>
+        <div class="stream-column">
+          <h3 class="stream-title">Management</h3>
+          <div class="stream-subjects" id="managementSubjects"></div>
+        </div>
+        <div class="stream-column">
+          <h3 class="stream-title">Other</h3>
+          <div class="stream-subjects" id="otherSubjects">
+            <div class="custom-subject-input">
+              <input type="text" id="customSubject" placeholder="Subject">
+              <button type="button" onclick="addCustomSubject()">Add</button>
+            </div>
+            <div id="customSubjectsList"></div>
+          </div>
+        </div>
+      </div>
+    `;
+    
+        const scienceSubjects = [
+          'Physics', 'Chemistry', 'Mathematics', 'English',
+          'Nepali', 'Computer', 'Social', 'All Guidance','Others'
+        ];
+    
+        const managementSubjects = [
+          'Account', 'Economics', 'Business Math', 'English',
+          'Nepali', 'Computer', 'Social', 'All Guidance', 'Others'
+        ];
+    
+        renderSubjectCards(scienceSubjects, document.getElementById('scienceSubjects'), selectedSubjects, hiddenSubjectInput);
+        renderSubjectCards(managementSubjects, document.getElementById('managementSubjects'), selectedSubjects, hiddenSubjectInput);
+      }
+    }
+    
+    function renderSubjectCards(subjects, container, selectedSubjects, hiddenSubjectInput) {
+      subjects.forEach(subject => {
+        const card = document.createElement('div');
+        card.className = 'subject-card';
+        card.innerHTML = `
+          <i class="${getSubjectIcon(subject)}"></i>
+          <span>${subject}</span>
+        `;
+    
+        card.addEventListener('click', () => {
+          // Toggle selected class
+          card.classList.toggle('selected');
+          
+          // Update selected subjects array
+          if (card.classList.contains('selected')) {
+            if (selectedSubjects.length < 3) {
+              selectedSubjects.push(subject);
+            } else {
+              card.classList.remove('selected');
+              alert('You can select up to 3 subjects');
+              return;
+            }
+          } else {
+            selectedSubjects = selectedSubjects.filter(s => s !== subject);
+          }
+          
+          // Update hidden input
+          hiddenSubjectInput.value = selectedSubjects.join(',').toLowerCase().replace(/ /g, '_');
+        });
+        
+        container.appendChild(card);
+      });
+    }
+
+    function addCustomSubject() {
+  const customSubject = document.getElementById('customSubject').value.trim();
+  const customSubjectsList = document.getElementById('customSubjectsList');
+  const hiddenSubjectInput = document.getElementById('subject');
+  let selectedSubjects = hiddenSubjectInput.value ? hiddenSubjectInput.value.split(',') : [];
+  
+  if (customSubject) {
+    if (selectedSubjects.length < 3) {
+      const card = document.createElement('div');
+      card.className = 'subject-card selected';
+      card.innerHTML = `
+        <i class="fas fa-book"></i>
+        <span>${customSubject}</span>
+        <i class="fas fa-times remove-subject"></i>
+      `;
+      
+      card.querySelector('.remove-subject').addEventListener('click', (e) => {
+        e.stopPropagation();
+        card.remove();
+        selectedSubjects = selectedSubjects.filter(s => s !== customSubject);
+        hiddenSubjectInput.value = selectedSubjects.join(',');
+      });
+      
+      customSubjectsList.appendChild(card);
+      selectedSubjects.push(customSubject);
+      hiddenSubjectInput.value = selectedSubjects.join(',');
+      document.getElementById('customSubject').value = '';
+    } else {
+      alert('You can select up to 3 subjects');
+    }
+  }
+}
+    
+    
+  
+
+// Update form submission handler
+document.getElementById('parentForm').addEventListener('submit', async function(e) {
+  e.preventDefault();
+  
+  // Verify captcha if verification section is visible
+  const verificationSection = document.getElementById('verificationSection');
+  if (verificationSection.style.display !== 'none') {
+    const userCode = document.getElementById('verificationCode').value;
+    const correctCode = sessionStorage.getItem('captchaCode');
+    
+    if (!userCode) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Verification Required',
+        text: 'Please enter the verification code.'
+      });
+      return;
+    }
+    
+    if (userCode !== correctCode) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Verification Failed',
+        text: 'The verification code is incorrect. Please try again.'
+      });
+      // Generate new code
+      const captchaText = document.getElementById('captchaText');
+      const code = Math.floor(1000 + Math.random() * 9000);
+      captchaText.textContent = code;
+      sessionStorage.setItem('captchaCode', code);
+      return;
+    }
+  }
+  
+  // Validate required fields
+  const requiredFields = ['parentName', 'phone', 'address', 'grade', 'preferredTime'];
+  for (const field of requiredFields) {
+    if (!document.getElementById(field).value.trim()) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Please fill out all required fields'
+      });
+      return;
+    }
+  }
+  
+  // Check if preferred teacher is selected
+  if (!document.querySelector('input[name="preferredTeacher"]:checked')) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Please select a preferred teacher'
+    });
+    return;
+  }
+  
+  // Manual validation for subjects
+  const subjectField = document.getElementById('subject');
+  if (!subjectField.value) {
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Please select at least one subject'
+    });
+    return;
+  }
+  
+  const formData = {
+    parentName: document.getElementById('parentName').value,
+    phone: document.getElementById('phone').value,
+    address: document.getElementById('address').value,
+    salary: document.getElementById('salary').value,
+    preferredTeacher: document.querySelector('input[name="preferredTeacher"]:checked').value,
+    grade: document.getElementById('grade').value,
+    subjects: document.getElementById('subject').value.split(','),
+    preferredTime: document.getElementById('preferredTime').value
+  };
+
+  try {
+    // Increment submission count before successful submission
+    const submissions = incrementSubmissionCount();
+    
+    const response = await fetch(`https://api.dearsirhometuition.com/api/parents/submit`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(formData)
+    });
+
+    const data = await response.json();
+
+    if (data.success) {
+      Swal.fire({
+        icon: 'success',
+        title: 'Success!',
+        text: 'Registration submitted successfully!'
+      }).then(() => {
+        this.reset();
+        
+        // Check if we need to show verification for next submission
+        if (submissions.count >= 2) {
+          showVerification();
+        }
+      });
+    } else {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error',
+        text: 'Error: ' + data.message
+      });
+    }
+  } catch (error) {
+    console.error('Error:', error);
+    Swal.fire({
+      icon: 'error',
+      title: 'Error',
+      text: 'Error submitting form. Please try again.'
+    });
+  }
+});
+</script>
+
+</body>
+</html>

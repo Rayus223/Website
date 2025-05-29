@@ -1,0 +1,600 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    
+
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DXKBVVB6PF');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Application</title>
+    
+    <link rel="shortcut icon" href="../image/favicon.ico">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <!-- Back Arrow Button -->
+        <div class="back-arrow" onclick="window.location.href='../index.html'">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Home</span>
+        </div>
+
+        <!-- Login Section -->
+        <div id="loginSection" class="form-container">
+            <h1>Teacher Login</h1>
+            <p class="form-description">Please login to continue with your application</p>
+            
+            <div class="login-form">
+                <div class="form-group">
+                    <input type="email" id="loginEmail" required>
+                    <label for="loginEmail">Email Address</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="loginPassword" required>
+                    <label for="loginPassword">Password</label>
+                </div>
+                <button onclick="login()" class="submit-btn">
+                    <span>Login</span>
+                    <i class="fas fa-sign-in-alt"></i>
+                </button>
+                <div class="form-links">
+                    <a href="#" onclick="showForgotPassword()" class="forgot-password">
+                        <i class="fas fa-key"></i> Forgot Password?
+                    </a>
+                    <a href="teacherSignup.html" class="signup-link">New here? 
+                        <i class="fas fa-user-plus"></i> Sign Up
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Forgot Password Section -->
+        <div id="forgotPasswordSection" class="form-container" style="display: none;">
+            <h1>Reset Password</h1>
+            <p class="form-description">Enter your email address to receive a password reset link</p>
+            
+            <div class="forgot-password-form">
+                <div class="form-group">
+                    <input type="email" id="resetEmail" required>
+                    <label for="resetEmail">Email Address</label>
+                </div>
+                <button onclick="sendResetLink()" class="submit-btn reset-btn">
+                    <span>Send Reset Link</span>
+                    <i class="fas fa-paper-plane"></i>
+                </button>
+                <button onclick="backToLogin()" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Login</span>
+                </button>
+            </div>
+        </div>
+
+       
+        
+        </div>
+    </div>
+
+    <style>
+    * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+    
+    body {
+        background: linear-gradient(135deg, #43cea2, #185a9d);
+        min-height: 100vh;
+        padding: 40px 20px;
+    }
+    
+    .container {
+        max-width: 800px;
+        margin: 0 auto;
+        position: relative;
+    }
+    
+    .form-container {
+        background: rgba(255, 255, 255, 0.95);
+        border-radius: 20px;
+        padding: 40px;
+        box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+        margin-bottom: 20px;
+    }
+    
+    h1 {
+        color: #333;
+        text-align: center;
+        margin-bottom: 10px;
+        font-size: 2.5em;
+    }
+    
+    .form-description {
+        text-align: center;
+        color: #666;
+        margin-bottom: 30px;
+    }
+    
+    .form-section {
+        background: #fff;
+        padding: 25px;
+        border-radius: 15px;
+        margin-bottom: 25px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+    }
+    
+    .form-section h3 {
+        color: #185a9d;
+        margin-bottom: 20px;
+        display: flex;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .form-group {
+        margin-bottom: 20px;
+        position: relative;
+    }
+    
+    input, select, textarea {
+        width: 100%;
+        padding: 12px;
+        border: 2px solid #ddd;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: all 0.3s ease;
+    }
+    
+    input:focus, select:focus, textarea:focus {
+        border-color: #43cea2;
+        outline: none;
+    }
+    
+    label {
+        position: absolute;
+        left: 12px;
+        top: 12px;
+        color: #666;
+        transition: all 0.3s ease;
+        pointer-events: none;
+        background: white;
+        padding: 0 5px;
+    }
+    
+    input:focus ~ label,
+    input:valid ~ label,
+    textarea:focus ~ label,
+    textarea:valid ~ label {
+        top: -10px;
+        left: 10px;
+        font-size: 14px;
+        color: #43cea2;
+    }
+    
+    select {
+        cursor: pointer;
+        color: #666;
+    }
+    
+    textarea {
+        height: 100px;
+        resize: vertical;
+    }
+    
+    .submit-btn {
+        width: 100%;
+        padding: 15px;
+        background: linear-gradient(135deg, #43cea2, #185a9d);
+        border: none;
+        color: white;
+        box-shadow: 0 2px 10px rgba(14, 165, 233, 0.2);
+
+        border-radius: 8px;
+        font-size: 18px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+    }
+    
+    .back-arrow {
+        position:relative;
+        padding: 7px 10px;
+        margin: 1px;
+        color: white;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    
+    .back-arrow:hover {
+        transform: translateX(-5px);
+    }
+    
+    /* Login Form Specific Styles */
+    .form-links {
+        display: flex;
+        justify-content: space-between;
+        margin-top: 20px;
+    }
+    
+    .form-links a {
+        color: #185a9d;
+        text-decoration: none;
+        font-size: 14px;
+        transition: all 0.3s ease;
+        display: flex;
+        align-items: center;
+        gap: 5px;
+    }
+    
+    .form-links a:hover {
+        color: #43cea2;
+    }
+    
+    /* Forgot Password Form Specific Styles */
+    .back-btn {
+        width: 100%;
+        padding: 12px;
+        background: #f5f5f5;
+        color: #666;
+        border: none;
+        border-radius: 8px;
+        font-size: 16px;
+        cursor: pointer;
+        margin-top: 10px;
+        transition: all 0.3s ease;
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        gap: 10px;
+    }
+    
+    .back-btn:hover {
+        background: #e5e5e5;
+    }
+    
+    /* Multiple Select Styles */
+    .select-label {
+        position: static;
+        margin-bottom: 5px;
+        display: block;
+        color: #666;
+    }
+    
+    select[multiple] {
+        height: 120px;
+        padding: 8px;
+    }
+    
+    select[multiple] option {
+        padding: 8px;
+        margin: 2px 0;
+        border-radius: 4px;
+    }
+    
+    select[multiple] option:checked {
+        background: linear-gradient(135deg, #43cea2, #185a9d);
+        color: white;
+    }
+    
+    /* Loading State */
+    .submit-btn:disabled {
+        opacity: 0.7;
+        cursor: not-allowed;
+        transform: none;
+    }
+
+    /* Add this to your existing styles */
+    .logout-btn {
+        padding: 8px 15px;
+        background: #f44336;
+        color: white;
+        border: none;
+        border-radius: 4px;
+        cursor: pointer;
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        margin-bottom: 20px;
+        font-size: 14px;
+    }
+
+    .logout-btn:hover {
+        background: #d32f2f;
+    }
+
+    .select-label {
+        position: static;
+        display: block;
+        margin-bottom: 8px;
+        color: #666;
+    }
+
+    select[multiple] {
+        height: 120px;
+    }
+    
+    /* Responsive Design */
+    @media (max-width: 768px) {
+        .form-container {
+            padding: 20px;
+        }
+    
+        h1 {
+            font-size: 2em;
+        }
+    
+        .form-section {
+            padding: 15px;
+        }
+    
+        .form-links {
+            flex-direction: column;
+            gap: 10px;
+            align-items: center;
+        }
+    }
+    
+    @media (max-width: 480px) {
+        body {
+            padding: 20px 10px;
+        }
+    
+        h1 {
+            font-size: 1.8em;
+        }
+    
+        .form-description {
+            font-size: 14px;
+        }
+    
+        .submit-btn {
+            font-size: 16px;
+        }
+    }
+
+    </style>
+
+
+<script>
+    // Check if the user is already logged in
+    document.addEventListener('DOMContentLoaded', function() {
+        checkExistingLogin();
+    });
+
+    // Function to check if user is already logged in
+    async function checkExistingLogin() {
+        const token = localStorage.getItem('token');
+        if (!token) return; // No token, needs to log in
+        
+        try {
+            console.log('Checking existing login token...');
+            // Verify token is still valid
+            const response = await fetch('http://localhost:5000/api/teacher-apply/verify-token', {
+                method: 'GET',
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            });
+            
+            console.log('Token verification status:', response.status);
+            
+            if (response.ok) {
+                // Token is valid, redirect to profile page
+                console.log('Token valid, redirecting to profile page');
+                window.location.href = 'teacherProfile.html';
+            } else {
+                // Only clear token for unauthorized responses
+                if (response.status === 401 || response.status === 403) {
+                    console.log('Token invalid (unauthorized), clearing token');
+                    localStorage.removeItem('token');
+                } else {
+                    // For server errors, we'll still try to proceed to profile page
+                    console.log('Server error but not unauthorized, attempting profile page anyway');
+                    window.location.href = 'teacherProfile.html';
+                }
+            }
+        } catch (error) {
+            console.error('Network error verifying login:', error);
+            // For network errors, still try to proceed to profile
+            console.log('Network error, attempting to proceed to profile anyway');
+            window.location.href = 'teacherProfile.html';
+        }
+    }
+
+    window.onload = function() {
+        // Always show login form first
+        showLoginForm();
+    };
+
+    function showLoginForm() {
+        document.getElementById('loginSection').style.display = 'block';
+        document.getElementById('forgotPasswordSection').style.display = 'none';
+    }
+
+    function showForgotPassword() {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('forgotPasswordSection').style.display = 'block';
+    }
+
+    function backToLogin() {
+        showLoginForm();
+    }
+
+    async function login() {
+        const email = document.getElementById('loginEmail').value;
+        const password = document.getElementById('loginPassword').value;
+
+        if (!email || !password) {
+            alert('Please enter both email and password');
+            return;
+        }
+
+        if (!validateEmail(email)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        console.log('Attempting login for email:', email);
+        try {
+            // First check if user is registered
+            console.log('Checking if user is registered...');
+            const checkResponse = await fetch(`http://localhost:5000/api/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
+            
+            if (!checkResponse.ok) {
+                console.error('Registration check failed with status:', checkResponse.status);
+                throw new Error(`Status: ${checkResponse.status}`);
+            }
+            
+            const checkData = await checkResponse.json();
+            console.log('Registration check response:', checkData);
+
+            if (!checkData.isRegistered) {
+                alert('You need to sign up first. Redirecting to signup page...');
+                window.location.href = 'teacherSignup.html';
+                return;
+            }
+
+            // Proceed with login if registered
+            console.log('User is registered, attempting login...');
+            const loginResponse = await fetch(`http://localhost:5000/api/teacher-apply/login`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email, password })
+            });
+
+            // Log full response details
+            console.log('Login response status:', loginResponse.status);
+            console.log('Login response headers:', Object.fromEntries([...loginResponse.headers.entries()]));
+
+            // Clone the response to read it twice
+            const responseClone = loginResponse.clone();
+            
+            // Try to get the raw response text first
+            const rawResponseText = await responseClone.text();
+            console.log('Raw login response text:', rawResponseText);
+            
+            if (!loginResponse.ok) {
+                console.error('Login failed with status:', loginResponse.status);
+                // Try to parse the error response if it's JSON
+                let errorMessage = 'Invalid credentials';
+                try {
+                    const errorData = JSON.parse(rawResponseText);
+                    errorMessage = errorData.message || errorMessage;
+                    console.error('Login error details:', errorData);
+                } catch (e) {
+                    console.error('Could not parse error response as JSON');
+                }
+                alert(`Login failed: ${errorMessage}`);
+                throw new Error(errorMessage);
+            }
+
+            // Parse the actual response
+            let loginData;
+            try {
+                loginData = JSON.parse(rawResponseText);
+                console.log('Parsed login response:', loginData);
+            } catch (e) {
+                console.error('Error parsing login response:', e);
+                throw new Error('Server returned invalid JSON');
+            }
+
+            if (loginData.success) {
+                console.log('Login successful, saving token and redirecting...');
+                localStorage.setItem('token', loginData.token);
+                localStorage.setItem('teacherData', JSON.stringify(loginData.teacher));
+                // Redirect to application page after successful login
+                window.location.href = 'teacherProfile.html';
+            } else {
+                alert(loginData.message || 'Invalid credentials');
+            }
+        } catch (error) {
+            console.error('Error during login process:', error);
+            alert('Error logging in. Please try again. ' + error.message);
+        }
+    }
+
+    async function sendResetLink() {
+        const resetEmail = document.getElementById('resetEmail').value;
+        const resetBtn = document.querySelector('.reset-btn');
+
+        if (!resetEmail) {
+            alert('Please enter your email address');
+            return;
+        }
+
+        if (!validateEmail(resetEmail)) {
+            alert('Please enter a valid email address');
+            return;
+        }
+
+        resetBtn.disabled = true;
+        resetBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
+
+        try {
+            // Check if user is registered before sending reset link
+            const checkResponse = await fetch(`http://localhost:5000/api/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
+            const checkData = await checkResponse.json();
+
+            if (!checkData.isRegistered) {
+                alert('This email is not registered. Please sign up first.');
+                resetBtn.disabled = false;
+                resetBtn.innerHTML = '<span>Send Reset Link</span><i class="fas fa-paper-plane"></i>';
+                return;
+            }
+
+            // Send reset password request
+            const response = await fetch(`http://localhost:5000/api/teacher-apply/reset-password`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email: resetEmail })
+            });
+
+            const data = await response.json();
+
+            if (data.success) {
+                alert('Password reset link has been sent to your email');
+                backToLogin();
+            } else {
+                alert(data.message || 'Error sending reset link');
+            }
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Error sending reset link. Please try again.');
+        } finally {
+            resetBtn.disabled = false;
+            resetBtn.innerHTML = '<span>Send Reset Link</span><i class="fas fa-paper-plane"></i>';
+        }
+    }
+
+    function validateEmail(email) {
+        const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        return re.test(email);
+    }
+</script>
+
+</body>
+</html>

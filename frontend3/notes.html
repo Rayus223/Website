@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+  
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-DXKBVVB6PF');
+  </script>
+
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Study Notes - Dear Sir Home Tuition</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@400;700&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=EB+Garamond:ital,wght@0,400..800;1,400..800&family=Lato:ital,wght@0,100;0,300;0,400;0,700;0,900;1,100;1,300;1,400;1,700;1,900&family=Macondo&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Noto+Sans+Mongolian&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+  
+  <style>
+    /* Notes Page Styles */
+    .notes-page-header {
+      text-align: center;
+      padding: 140px 0 50px;
+      background-image: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23000000' fill-opacity='0.05'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2V6h4V4H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+    }
+    
+    .notes-page-title {
+      font-size: 6rem;
+      color: #2A9D8F;
+      margin-bottom: 3rem;
+      font-weight: 700;
+    }
+    
+    .notes-page-subtitle {
+      font-size: 2rem;
+      color: #666;
+      max-width: 800px;
+      margin: 0 auto;
+    }
+    
+    .notes-search {
+      max-width: 600px;
+      margin: 5rem auto;
+      position: relative;
+    }
+    
+    .notes-search input {
+      width: 100%;
+      padding: 1.5rem 2rem;
+      border: 1px solid #ddd;
+      border-radius: 50px;
+      font-size: 1.6rem;
+      box-shadow: 0 2px 10px rgba(0,0,0,0.05);
+    }
+    
+    .notes-search button {
+      position: absolute;
+      right: 5px;
+      top: 5px;
+      background: #2A9D8F;
+      color: white;
+      border: none;
+      height: calc(100% - 10px);
+      padding: 0 2.5rem;
+      border-radius: 50px;
+      cursor: pointer;
+      font-size: 1.6rem;
+    }
+    
+    .notes-filters {
+      display: flex;
+      justify-content: center;
+      gap: 1.5rem;
+      margin: 2rem 0 4rem;
+      flex-wrap: wrap;
+    }
+    
+    .filter-btn {
+      padding: 1rem 2rem;
+      background: #f0f0f0;
+      border: none;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: all 0.3s;
+      font-size: 1.6rem;
+    }
+    
+    .filter-btn.active, .filter-btn:hover {
+      background: #2A9D8F;
+      color: white;
+    }
+    
+    .notes-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+      gap: 3rem;
+      padding: 5rem;
+      background: #f8f9fa;
+    }
+    
+    .note-card {
+      background: white;
+      border-radius: 12px;
+      overflow: hidden;
+      transition: transform 0.3s, box-shadow 0.3s;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+    }
+    
+    .note-card:hover {
+      transform: translateY(-5px);
+      box-shadow: 0 10px 25px rgba(0,0,0,0.1);
+    }
+    
+    .note-image {
+      height: 200px;
+      overflow: hidden;
+    }
+    
+    .note-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 0.5s;
+    }
+    
+    .note-card:hover .note-image img {
+      transform: scale(1.05);
+    }
+    
+    .note-content {
+      padding: 2rem;
+    }
+    
+    .note-subject {
+      font-size: 1.4rem;
+      color: #2A9D8F;
+      font-weight: 600;
+      margin-bottom: 1rem;
+    }
+    
+    .note-title {
+      font-size: 2.2rem;
+      margin-bottom: 1rem;
+      color: #185a9d;
+    }
+    
+    .note-desc {
+      color: #666;
+      font-size: 1.6rem;
+      margin-bottom: 2rem;
+      line-height: 1.6;
+    }
+    
+    .note-meta {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.4rem;
+      color: #777;
+      margin-bottom: 2rem;
+    }
+    
+    .download-btn {
+      width: 100%;
+      background: #2A9D8F;
+      color: white;
+      border: none;
+      padding: 1.2rem;
+      border-radius: 50px;
+      font-size: 1.6rem;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+    
+    .download-btn:hover {
+      transform: translateY(-2px);
+      background: #238477;
+      box-shadow: 0 5px 15px rgba(42, 157, 143, 0.3);
+    }
+
+    /* Mobile Responsive */
+    @media (max-width: 768px) {
+      .notes-page-header {
+        padding: 120px 0 40px;
+      }
+      
+      .notes-page-title {
+        font-size: 7rem;
+        margin-bottom: 2.5rem;
+      }
+      
+      .notes-page-subtitle {
+        font-size: 2.6rem;
+        padding: 0 2rem;
+        margin-bottom: 2rem;
+      }
+      
+      .notes-search input {
+        font-size: 2rem;
+      }
+      
+      .notes-search button {
+        font-size: 2rem;
+      }
+      
+      .filter-btn {
+        font-size: 2rem;
+        padding: 1.5rem 3rem;
+      }
+      
+      .notes-grid {
+        padding: 2rem;
+        gap: 2rem;
+      }
+      
+      .note-title {
+        font-size: 2.8rem;
+      }
+      
+      .note-desc {
+        font-size: 2.2rem;
+      }
+      
+      .note-meta {
+        font-size: 2rem;
+      }
+      
+      .download-btn {
+        font-size: 2.4rem;
+        padding: 1.8rem;
+      }
+    }
+
+    /* Additional styles for the single note card */
+    .note-highlights {
+      margin: 2rem 0;
+      background: #f8f9fa;
+      padding: 1.5rem;
+      border-radius: 8px;
+    }
+
+    .note-highlights ul {
+      list-style: none;
+      padding: 0;
+      margin: 0;
+    }
+
+    .note-highlights li {
+      font-size: 1.6rem;
+      color: #444;
+      margin-bottom: 1rem;
+      display: flex;
+      align-items: center;
+    }
+
+    .note-highlights li:last-child {
+      margin-bottom: 0;
+    }
+
+    .note-status {
+      margin-top: 2rem;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 1.4rem;
+      color: #666;
+    }
+
+    .status-badge {
+      background: #2A9D8F;
+      color: white;
+      padding: 0.5rem 1.5rem;
+      border-radius: 20px;
+      font-size: 1.4rem;
+    }
+
+    .update-date {
+      color: #666;
+    }
+
+    /* Center the single card */
+    .notes-grid {
+      display: flex;
+      justify-content: center;
+      align-items: start;
+      padding: 5rem;
+      background: #f8f9fa;
+    }
+
+    .note-card {
+      max-width: 500px;
+      width: 100%;
+    }
+
+    /* Mobile Responsive Adjustments */
+    @media (max-width: 768px) {
+      .note-highlights li {
+        font-size: 2rem;
+      }
+
+      .note-status {
+        font-size: 1.8rem;
+        flex-direction: column;
+        gap: 1rem;
+        align-items: flex-start;
+      }
+
+      .status-badge {
+        font-size: 1.8rem;
+      }
+    }
+
+    /* Update the styles for the notes page header */
+    .notes-header {
+        padding-top: 120px;  /* Increased from whatever it was before */
+        padding-bottom: 40px;
+        text-align: center;
+    }
+
+    .notes-title {
+        font-size: 3.6rem;
+        color: #2A9D8F;
+        margin-bottom: 20px;
+    }
+
+    .notes-description {
+        font-size: 1.8rem;
+        color: #666;
+        max-width: 800px;
+        margin: 0 auto;
+        line-height: 1.6;
+    }
+
+    /* Adjust for mobile */
+    @media (max-width: 768px) {
+        .notes-header {
+            padding-top: 100px;  /* Slightly less on mobile but still enough to clear navbar */
+            padding-bottom: 30px;
+        }
+
+        .notes-title {
+            font-size: 3rem;
+        }
+
+        .notes-description {
+            font-size: 1.6rem;
+            padding: 0 20px;
+        }
+    }
+  </style>
+</head>
+<body class="body">
+
+  <!-- Navbar -->
+  <nav class="navbar">
+    <div class="nav-content">
+      <div class="nav-brand">
+        <img src="image/logo.png" alt="Dear Sir Home Tuition Logo" onclick="window.location.href='index.html'" class="logo"/>
+      </div>
+      
+      <ul class="nav-links">
+        <li><a href="index.html">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="Blog/blog.html">Blog</a></li>
+        <li><a href="https://wa.me/+9779767478036">Contact</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><button class="nav-cta" onclick="window.location.href='Apply/parent.html'">Get Started</button></li>
+      </ul>
+  
+      <div class="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Notes Header -->
+  <header class="notes-page-header">
+    <h1 class="notes-page-title">Study Notes & Resources</h1>
+    <p class="notes-page-subtitle">Access high-quality study materials prepared by our expert tutors to enhance your learning experience.</p>
+    
+    <!-- Search Bar -->
+    <div class="notes-search">
+      <input type="text" placeholder="Search for notes, subjects, or topics...">
+      <button><i class="fas fa-search"></i> Search</button>
+    </div>
+    
+    <!-- Filter Buttons -->
+    <div class="notes-filters">
+      <button class="filter-btn active">All</button>
+      <button class="filter-btn">Mathematics</button>
+      <button class="filter-btn">Science</button>
+      <button class="filter-btn">English</button>
+      <button class="filter-btn">Nepali</button>
+      <button class="filter-btn">Social Studies</button>
+      <button class="filter-btn">Computer</button>
+    </div>
+  </header>
+
+  <!-- Notes Grid -->
+  <section class="notes-grid">
+    <!-- Nepali A+ Guide Note Card -->
+    <div class="note-card">
+      <div class="note-image">
+        <a href="Notes/view-pdf.html?file=Nepali1.pdf">
+          <img src="Notes/Nepali1.jpg" alt="Nepali A+ Guide">
+        </a>
+      </div>
+      <meta property="og:title" content="SEE परीक्षामा नेपाली विषयमा A+ ल्याउने टिप्स" />
+      <meta property="og:description" content="SEE परीक्षामा नेपाली विषयमा उच्च अंक प्राप्त गर्ने सम्पूर्ण मार्गदर्शन। व्याकरण, निबन्ध, पत्र, कविता, कथा र उपन्यास सम्बन्धी महत्वपूर्ण टिप्स र ट्रिक्स।" />
+      <meta property="og:image" content="https://dearsirhometuition.com/Notes/Nepali1.jpg" />
+      <meta property="og:url" content="https://dearsirhometuition.com/Notes/nepali-see-guide" />
+      <div class="note-content">
+        <div class="note-subject">नेपाली विषय</div>
+        <h3 class="note-title">नेपालीमा A+ ल्याउने तरिका</h3>
+        <p class="note-desc">
+          SEE परीक्षामा नेपाली विषयमा उच्च अंक प्राप्त गर्ने सम्पूर्ण मार्गदर्शन। 
+          व्याकरण, निबन्ध, पत्र, कविता, कथा र उपन्यास सम्बन्धी महत्वपूर्ण टिप्स र ट्रिक्सहरू।
+        </p>
+        <div class="note-meta">
+          <span>कक्षा: SEE तयारी</span>
+          <span>पृष्ठ: 20+</span>
+        </div>
+        
+        <button class="download-btn" onclick="window.location.href='Notes/view-pdf.html?file=Nepali1.pdf'">
+          <i class="fas fa-eye"></i> नोट्स हेर्नुहोस्
+        </button>
+        <div class="note-status">
+          
+          <span class="update-date">Last Updated: 2025/02/15</span>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="footer">
+    <div class="footer-content">
+      <!-- Contact Info -->
+      <div class="footer-section">
+        <h2>Contact Us</h2>
+        <div class="contact-info">
+          <p>
+            <i class="far fa-envelope"></i>
+            <a href="mailto:dearsir.tuition@gmail.com">Email: dearsir.tuition@gmail.com</a>
+          </p>
+          <p>
+            <i class="fas fa-phone-alt"></i>
+            Phone: <a href="tel:+9779767478036">+977-9767478036</a>,
+            <a href="tel:+9779803941210">+977-9803941210</a>
+          </p>
+          <p>
+            <i class="fas fa-map-marker-alt"></i>
+            Address: Banasthali, Kharibot
+          </p>
+        </div>
+        <!-- Social Media Links -->
+        <div class="social-links">
+          <a href="https://www.facebook.com/share/1PNnUetz7Z/" target="_blank" class="social-link">
+            <i class="fab fa-facebook"></i>
+          </a>
+          <a href="https://wa.me/+9779846722600" target="_blank" class="social-link">
+            <i class="fab fa-whatsapp"></i>
+          </a>
+          <a href="https://www.instagram.com/dearsirhome?igsh=MWFmaDdvZGg0em9ibQ==" target="_blank" class="social-link">
+            <i class="fab fa-instagram"></i>
+          </a>
+          <a href=https://youtube.com/@dearsirhometuition?si=Ao-_BuNyDNCQ2gVK target="_blank" class="social-link">
+            <i class="fab fa-youtube"></i>
+          </a>
+        </div>
+      </div>
+
+      <!-- Quick Links -->
+      <div class="footer-section">
+        <h2>Quick Links</h2>
+        <ul class="quick-links">
+          <li><a href="index.html">Home</a></li>
+          <li><a href="about.html">About</a></li>
+          <li><a href="services.html">Services</a></li>
+          <li><a href="privacy.html">Privacy Policy</a></li>
+          <li><a href="notes.html">Study Notes</a></li>
+        </ul>
+      </div>
+    </div>
+
+    <!-- Copyright -->
+    <div class="footer-bottom">
+      <p>&copy; 2024 Dear Sir Home Tuition. All rights reserved.</p>
+    </div>
+  </footer>
+
+  <div class="floating-contact">
+    <a href="tel:+977-9846722600" class="contact-btn">
+      <i class="fas fa-phone-alt"></i>
+      <span>Call 9846722600</span>
+    </a>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html> 

@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sign Up - Dear Sir Home Tuition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <!-- Use the same styles as login.html -->
+</head>
+<body>
+    <!-- Navbar (reuse your existing navbar) -->
+    <nav class="navbar">
+        <!-- ... your existing navbar code ... -->
+    </nav>
+
+    <div class="auth-container">
+        <h2 style="text-align: center; margin-bottom: 30px;">Sign Up</h2>
+        <form class="auth-form" id="signupForm">
+            <div class="form-group">
+                <input type="text" id="name" required placeholder="Enter your full name">
+            </div>
+            <div class="form-group">
+                <input type="email" id="email" required placeholder="Enter your email address">
+            </div>
+            <div class="form-group">
+                <input type="password" id="password" required placeholder="Choose a password">
+            </div>
+            <div class="form-group">
+                <select id="role" required>
+                    <option value="" disabled selected>Select your role</option>
+                    <option value="student">Student</option>
+                    <option value="teacher">Teacher</option>
+                    <option value="parent">Parent</option>
+                </select>
+            </div>
+            <button type="submit" class="auth-btn">Sign Up</button>
+            <div id="errorMessage" class="error-message"></div>
+        </form>
+        <div class="auth-links">
+            <p>Already have an account? <a href="login.html">Login</a></p>
+        </div>
+    </div>
+    <div class="form-section">
+        <!-- Back Arrow Button -->
+        <div class="back-arrow" onclick="window.location.href='login.html'">
+            <i class="fas fa-arrow-left"></i>
+            <span>Back to Login</span>
+        </div>
+        
+        <h2>Sign Up</h2>
+        <!-- Rest of your signup form -->
+    </div>
+    
+    <style>
+    .back-arrow {
+        position: absolute;
+        top: 20px;
+        left: 20px;
+        display: flex;
+        align-items: center;
+        cursor: pointer;
+        color: #4CAF50;
+        transition: all 0.3s ease;
+    }
+    
+    .back-arrow i {
+        font-size: 20px;
+        margin-right: 8px;
+    }
+    
+    .back-arrow span {
+        font-size: 16px;
+    }
+    
+    .back-arrow:hover {
+        transform: translateX(-5px);
+        color: #45a049;
+    }
+    
+    /* Make sure the form section has relative positioning */
+    .form-section {
+        position: relative;
+        /* ... other styles ... */
+    }
+    </style>
+    
+       
+            <style>
+                body {
+                    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                    min-height: 100vh;
+                    display: flex;
+                    justify-content: center;
+                    align-items: center;
+                    margin: 0;
+                    font-family: 'Arial', sans-serif;
+                }
+        
+                .auth-container {
+                    max-width: 400px;
+                    width: 90%;
+                    padding: 40px;
+                    background: rgba(255, 255, 255, 0.95);
+                    border-radius: 20px;
+                    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+                    backdrop-filter: blur(10px);
+                }
+        
+                .auth-form {
+                    display: flex;
+                    flex-direction: column;
+                    gap: 20px;
+                }
+        
+                .form-group {
+                    position: relative;
+                }
+        
+                .form-group input,
+                .form-group select {
+                    width: 100%;
+                    padding: 15px;
+                    border: 2px solid #e1e1e1;
+                    border-radius: 10px;
+                    font-size: 16px;
+                    transition: all 0.3s;
+                    background: white;
+                    color: #333;
+                }
+        
+                .form-group input:focus,
+                .form-group select:focus {
+                    border-color: #4a90e2;
+                    box-shadow: 0 0 0 3px rgba(74, 144, 226, 0.1);
+                    outline: none;
+                }
+        
+                .form-group input::placeholder {
+                    color: #999;
+                }
+        
+                .auth-btn {
+                    background: #4a90e2;
+                    color: white;
+                    padding: 15px;
+                    border: none;
+                    border-radius: 10px;
+                    cursor: pointer;
+                    font-size: 16px;
+                    font-weight: 600;
+                    transition: all 0.3s;
+                    text-transform: uppercase;
+                    letter-spacing: 1px;
+                }
+        
+                .auth-btn:hover {
+                    background: #357abd;
+                    transform: translateY(-2px);
+                    box-shadow: 0 5px 15px rgba(74, 144, 226, 0.3);
+                }
+        
+                .error-message {
+                    color: #ff4444;
+                    text-align: center;
+                    margin-top: 10px;
+                    font-size: 14px;
+                }
+        
+                .auth-links {
+                    text-align: center;
+                    margin-top: 25px;
+                }
+        
+                .auth-links a {
+                    color: #4a90e2;
+                    text-decoration: none;
+                    font-weight: 600;
+                }
+        
+                .auth-links a:hover {
+                    text-decoration: underline;
+                }
+        
+                h2 {
+                    color: #333;
+                    text-align: center;
+                    margin-bottom: 30px;
+                    font-size: 24px;
+                    font-weight: 700;
+                }
+        
+                /* Custom select styling */
+                .form-group select {
+                    appearance: none;
+                    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='24' height='24' viewBox='0 0 24 24' fill='none' stroke='%23999' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='6 9 12 15 18 9'%3E%3C/polyline%3E%3C/svg%3E");
+                    background-repeat: no-repeat;
+                    background-position: right 15px center;
+                    background-size: 16px;
+                    padding-right: 45px;
+                }
+        
+                .form-group select:invalid {
+                    color: #999;
+                }
+        
+                /* Responsive adjustments */
+                @media (max-width: 480px) {
+                    .auth-container {
+                        width: 85%;
+                        padding: 30px;
+                        margin: 20px;
+                    }
+                }
+            </style>
+        
+    
+
+        <script>
+            
+            document.getElementById('signupForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                
+                const name = document.getElementById('name').value;
+                const email = document.getElementById('email').value;
+                const password = document.getElementById('password').value;
+                const role = document.getElementById('role').value;
+                
+                // Add debug log
+                console.log('Attempting to register with:', { name, email, role });
+                
+                try {
+                    console.log('Sending request to server...');
+                    const response = await fetch('http://localhost:5000/api/auth/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ name, email, password, role })
+                    });
+        
+                    // Add debug log
+                    console.log('Response received:', response.status);
+        
+                    const data = await response.json();
+                    console.log('Data received:', data);  // Add debug log
+        
+                    if (response.ok) {
+                        console.log('Registration successful!');  // Add debug log
+                        localStorage.setItem('token', data.token);
+                        window.location.href = 'index.html';
+                    } else {
+                        console.error('Registration failed:', data.message);  // Add debug log
+                        document.getElementById('errorMessage').textContent = data.message;
+                    }
+                } catch (error) {
+                    console.error('Error during registration:', error);  // Add debug log
+                    document.getElementById('errorMessage').textContent = 'An error occurred. Please try again.';
+                }
+            });
+        </script>
+</body>
+</html>

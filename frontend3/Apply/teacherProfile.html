@@ -1,0 +1,974 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+
+     <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DXKBVVB6PF');
+    </script>
+
+ 
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Teacher Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <img src="../image/logo.png" alt="Dear Sir Home Tuition Logo" onclick="window.location.href='../index.html'" class="logo"/>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../services.html">Services</a></li>
+                <li><a href="../Blog/blog.html">Blog</a></li>
+                <li><a href="https://wa.me/+9779767478036">Contact</a></li>
+                <li><a href="../faq.html">FAQ</a></li>
+                <li><button class="nav-cta" onclick="window.location.href='../Apply/parent.html'">Get Started</button></li>
+                <li class="nav-item active">
+                    <div class="profile-dropdown">
+                        <div class="profile-trigger">
+                            <i class="fas fa-user-circle"></i>
+                            <span id="navTeacherName">Teacher</span>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="teacherProfile.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <a href="vacancies.html"><i class="fas fa-briefcase"></i> View Vacancies</a>
+                            <a href="myApplications.html"><i class="fas fa-file-alt"></i> My Applications</a>
+                            <a href="editProfile.html"><i class="fas fa-user-edit"></i> Edit Profile</a>
+                            <a href="#" onclick="logout()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="main-container">
+        <!-- Profile Card -->
+        <section class="profile-card">
+            <div class="profile-header">
+                <div class="profile-avatar">
+                    <i class="fas fa-user-circle"></i>
+                </div>
+                <div class="profile-info">
+                    <h1 id="teacherName">Loading...</h1>
+                    <p id="teacherEmail">Loading...</p>
+                    <p id="teacherPhone">Loading...</p>
+                </div>
+            </div>
+            <div class="profile-stats">
+                <div class="stat-item">
+                    <i class="fas fa-file-alt"></i>
+                    <div class="stat-details">
+                        <span class="stat-value" id="totalApplications">0</span>
+                        <span class="stat-label">Applications</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-check-circle"></i>
+                    <div class="stat-details">
+                        <span class="stat-value" id="acceptedApplications">0</span>
+                        <span class="stat-label">Accepted</span>
+                    </div>
+                </div>
+                <div class="stat-item">
+                    <i class="fas fa-clock"></i>
+                    <div class="stat-details">
+                        <span class="stat-value" id="pendingApplications">0</span>
+                        <span class="stat-label">Pending</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Quick Actions -->
+        <section class="quick-actions">
+            <h2>Quick Actions</h2>
+            <div class="actions-grid">
+                <a href="vacancies.html" class="action-card">
+                    <i class="fas fa-briefcase"></i>
+                    <span>Browse Vacancies</span>
+                </a>
+                <a href="myApplications.html" class="action-card">
+                    <i class="fas fa-file-alt"></i>
+                    <span>My Applications</span>
+                    <span id="applicationsBadge" class="badge">0</span>
+                </a>
+                <a href="editProfile.html" class="action-card">
+                    <i class="fas fa-user-edit"></i> 
+                    <span>Edit Profile</span> 
+                </a>
+                <a href="https://wa.me/+9779768797777" target="_blank" class="action-card">
+                    <i class="fas fa-question-circle"></i>
+                    <span>Help Center</span>
+                </a>
+            </div>
+        </section>
+
+        <!-- Application Status -->
+        <section class="status-section">
+            <h2>Application Status</h2>
+            <div class="status-card">
+                <div class="status-header">
+                    <div id="statusIndicator" class="status-badge">Pending Review</div>
+                    <span class="status-date" id="lastUpdated">Last updated: Today</span>
+                </div>
+                <p id="statusDescription" class="status-message">
+                    Your application is currently under review. We will notify you once there's an update.
+                </p>
+                <div class="status-timeline">
+                    <div class="timeline-item active">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4>Application Submitted</h4>
+                            <p>Your application has been received</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" id="reviewItem">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4>Under Review</h4>
+                            <p>Application is being reviewed</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item" id="decisionItem">
+                        <div class="timeline-dot"></div>
+                        <div class="timeline-content">
+                            <h4>Final Decision</h4>
+                            <p>Pending final decision</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </main>
+
+    <style>
+        /* Modern CSS Reset */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', system-ui, sans-serif;
+        }
+
+        :root {
+            --primary-color: #1e4d92;
+            --secondary-color: #264653;
+            --accent-color: #E9C46A;
+            --text-color: #2C3E50;
+            --background-color: #F8F9FA;
+            --card-shadow: 0 2px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        body {
+            background-color: var(--background-color);
+            color: var(--text-color);
+            line-height: 1.6;
+        }
+
+        /* Navigation */
+        .navbar {
+            background-color: #fff;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+            padding: 10px 0;
+        }
+
+        .nav-content {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .nav-brand {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 50px;
+            cursor: pointer;
+        }
+
+        .nav-links {
+            display: flex;
+            list-style: none;
+            margin: 0;
+            padding: 0;
+            align-items: center;
+        }
+
+        .nav-links li {
+            margin: 0 10px;
+        }
+
+        .nav-links a {
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s ease;
+        }
+
+        .nav-links a:hover, .nav-links li.active a {
+            color: #1e4d92;
+        }
+
+        .nav-cta {
+            background: #1e4d92;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-cta:hover {
+            background: #264653;
+            transform: translateY(-2px);
+        }
+
+        .hamburger {
+            display: none;
+            cursor: pointer;
+        }
+
+        .bar {
+            width: 25px;
+            height: 3px;
+            background-color: #333;
+            margin: 5px 0;
+            transition: 0.4s;
+        }
+
+        /* Profile Dropdown Styles */
+        .profile-dropdown {
+            position: relative;
+            display: inline-block;
+        }
+
+        .profile-trigger {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+            color: #333;
+            padding: 5px 10px;
+            border-radius: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .profile-trigger:hover {
+            background-color: rgba(42, 157, 143, 0.1);
+        }
+
+        .profile-trigger i {
+            font-size: 1.5rem;
+            color: #1e4d92;
+        }
+
+        .dropdown-content {
+            display: none;
+            position: absolute;
+            right: 0;
+            min-width: 200px;
+            background-color: #fff;
+            box-shadow: 0 8px 16px rgba(0,0,0,0.1);
+            border-radius: 8px;
+            padding: 10px 0;
+            z-index: 1;
+        }
+
+        .dropdown-content a {
+            color: #333;
+            padding: 12px 16px;
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .dropdown-content a:hover {
+            background-color: #f5f5f5;
+            color: #1e4d92;
+        }
+
+        .profile-dropdown:hover .dropdown-content {
+            display: block;
+        }
+
+        /* Responsive Navbar */
+        @media (max-width: 1024px) {
+            .nav-links {
+                display: none;
+                flex-direction: column;
+                position: absolute;
+                top: 70px;
+                left: 0;
+                right: 0;
+                background: white;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+                padding: 20px;
+            }
+            
+            .nav-links.show {
+                display: flex;
+            }
+            
+            .nav-links li {
+                margin: 10px 0;
+            }
+            
+            .hamburger {
+                display: block;
+            }
+        }
+
+        /* Main Container */
+        .main-container {
+            max-width: 1200px;
+            margin: 120px auto 2rem;
+            padding: 1rem;
+            display: grid;
+            gap: 2rem;
+        }
+
+        /* Profile Card */
+        .profile-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .profile-avatar {
+            font-size: 4rem;
+            color: var(--primary-color);
+        }
+
+        .profile-info h1 {
+            color: var(--secondary-color);
+            margin-bottom: 0.5rem;
+        }
+
+        .profile-info p {
+            color: #666;
+        }
+
+        .profile-stats {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 1rem;
+        }
+
+        .stat-item {
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+            padding: 1rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+        }
+
+        .stat-item i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .stat-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-value {
+            font-size: 1.25rem;
+            font-weight: 600;
+            color: var(--secondary-color);
+        }
+
+        .stat-label {
+            font-size: 0.875rem;
+            color: #666;
+        }
+
+        /* Quick Actions */
+        .quick-actions {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .quick-actions h2 {
+            margin-bottom: 1.5rem;
+            color: var(--secondary-color);
+        }
+
+        .actions-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1rem;
+        }
+
+        .action-card {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1.5rem;
+            background: #f8f9fa;
+            border-radius: 10px;
+            text-decoration: none;
+            color: var(--text-color);
+            transition: transform 0.3s ease;
+        }
+
+        .action-card:hover {
+            transform: translateY(-5px);
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .action-card i {
+            font-size: 1.5rem;
+        }
+
+        /* Status Section */
+        .status-section {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: var(--card-shadow);
+        }
+
+        .status-card {
+            background: #fafaf8;
+            border-radius: 10px;
+            padding: 1.5rem;
+        }
+
+        .status-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+        }
+
+        .status-badge {
+            background: var(--primary-color);
+            color: white;
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.875rem;
+            transition: background-color 0.3s ease;
+        }
+
+        .status-date {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        .status-message {
+            margin-bottom: 1.5rem;
+        }
+
+        .status-timeline {
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            position: relative;
+        }
+
+        .status-timeline::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            bottom: 0;
+            left: 10px;
+            width: 2px;
+            background: #ddd;
+            z-index: 0;
+        }
+
+        .timeline-item {
+            display: flex;
+            gap: 1rem;
+            position: relative;
+            z-index: 1;
+        }
+
+        .timeline-dot {
+            width: 20px;
+            height: 20px;
+            background: #ddd;
+            border-radius: 50%;
+            margin-top: 5px;
+            transition: background-color 0.3s ease, transform 0.3s ease;
+        }
+
+        .timeline-item.active .timeline-dot {
+            background: var(--primary-color);
+            transform: scale(1.2);
+        }
+
+        .timeline-content {
+            flex: 1;
+            transition: opacity 0.3s ease;
+        }
+
+        .timeline-item:not(.active) .timeline-content {
+            opacity: 0.7;
+        }
+
+        .timeline-item.active .timeline-content {
+            opacity: 1;
+        }
+
+        .timeline-content h4 {
+            color: var(--secondary-color);
+            margin-bottom: 0.25rem;
+            font-weight: 600;
+            transition: color 0.3s ease;
+        }
+
+        .timeline-item.active .timeline-content h4 {
+            color: var(--primary-color);
+        }
+
+        .timeline-content p {
+            color: #666;
+            font-size: 0.875rem;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 768px) {
+            .nav-container {
+                padding: 1rem;
+            }
+
+            .btn-text {
+                display: none;
+            }
+
+            .main-container {
+                padding: 1rem;
+                margin-top: 70px;
+            }
+
+            .profile-header {
+                flex-direction: column;
+                text-align: center;
+                gap: 1rem;
+            }
+
+            .profile-stats {
+                grid-template-columns: 1fr;
+            }
+
+            .actions-grid {
+                grid-template-columns: 1fr 1fr;
+            }
+
+            .status-header {
+                flex-direction: column;
+                gap: 0.5rem;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .actions-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .profile-card, .quick-actions, .status-section {
+                padding: 1rem;
+            }
+        }
+
+        /* Add style for the badge */
+        .badge {
+            display: inline-block;
+            background-color: var(--primary-color);
+            color: white;
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            font-size: 0.75rem;
+            line-height: 22px;
+            text-align: center;
+            margin-left: 5px;
+        }
+    </style>
+
+    <script>
+        // Check authentication status immediately when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            checkAuthStatus();
+        });
+        
+        // Function to check if user is authenticated
+        function checkAuthStatus() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                window.location.href = 'teacher.html';
+                return;
+            }
+            
+            // Verify token validity by making an API call
+            verifyTokenAndLoadProfile(token);
+        }
+        
+        // Function to verify token and load profile data
+        async function verifyTokenAndLoadProfile(token) {
+            try {
+                console.log('Verifying token...');
+                const response = await fetch(`http://localhost:5000/api/teacher-apply/verify-token`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                console.log('Token verification response status:', response.status);
+                
+                if (!response.ok) {
+                    // Only clear token and redirect for 401/403 responses (unauthorized)
+                    if (response.status === 401 || response.status === 403) {
+                        console.error('Token is invalid (unauthorized), clearing and redirecting');
+                        localStorage.removeItem('token');
+                        window.location.href = 'teacher.html';
+                        return;
+                    } else {
+                        // For other errors (like network/server errors), continue anyway
+                        console.warn('Token verification failed but not due to auth issue, proceeding anyway');
+                    }
+                }
+                
+                console.log('Proceeding to load profile...');
+                // Load the profile
+                loadTeacherProfile(token);
+                
+            } catch (error) {
+                console.error('Error during token verification:', error);
+                // For network errors, continue without redirecting
+                console.log('Proceeding to load profile despite verification error...');
+                loadTeacherProfile(token);
+            }
+        }
+        
+        // Function to load teacher profile data
+        async function loadTeacherProfile(token) {
+            try {
+                // Try to load cached data from localStorage
+                const cachedData = localStorage.getItem('teacherData');
+                if (cachedData) {
+                    try {
+                        console.log('Using cached teacher data...');
+                        const teacherData = JSON.parse(cachedData);
+                        // Update UI with cached data
+                        updateTeacherUIFromData(teacherData);
+                        
+                        // Update status if available in cached data
+                        if (teacherData.status) {
+                            console.log('Found status in cached data:', teacherData.status);
+                            updateProfileStatus(teacherData.status);
+                        }
+                    } catch (e) {
+                        console.error('Error parsing cached data:', e);
+                    }
+                }
+                
+                // Attempt to refresh data from API
+                console.log('Fetching fresh profile data...');
+                const response = await fetch(`http://localhost:5000/api/teacher-apply/profile`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                if (!response.ok) {
+                    console.error('Profile fetch failed with status:', response.status);
+                    // If we already displayed cached data, don't overwrite with defaults
+                    if (!cachedData) {
+                        setDefaultProfileUI();
+                    }
+                    return;
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data);
+                
+                const teacherData = data.teacher;
+                console.log('Teacher data extracted:', teacherData);
+                
+                if (!teacherData) {
+                    console.error('No teacher data in response');
+                    if (!cachedData) {
+                        setDefaultProfileUI();
+                    }
+                    return;
+                }
+                
+                // Cache the fresh data
+                localStorage.setItem('teacherData', JSON.stringify(teacherData));
+
+                // Update profile information
+                updateTeacherUIFromData(teacherData);
+
+                // Update status from the API response
+                // Check both places where status might be found
+                const status = teacherData.status || (data.status ? data.status : 'pending');
+                console.log('Status determined from API:', status);
+                updateProfileStatus(status);
+                
+                // Load application statistics
+                loadApplicationStats(token);
+
+            } catch (error) {
+                console.error('Error fetching profile:', error);
+                // If we haven't displayed cached data, show defaults
+                if (!localStorage.getItem('teacherData')) {
+                    setDefaultProfileUI();
+                }
+            }
+        }
+        
+        // Helper function to update UI with teacher data
+        function updateTeacherUIFromData(teacherData) {
+            document.getElementById('teacherName').textContent = teacherData.fullName || "User";
+            document.getElementById('teacherEmail').textContent = teacherData.email || "Email not available";
+            document.getElementById('teacherPhone').textContent = teacherData.phone || "Phone not available";
+            
+            // Update the navbar teacher name - show just the first name
+            document.getElementById('navTeacherName').textContent = teacherData.fullName?.split(' ')[0] || "Teacher";
+        }
+
+        // Helper function to set default UI values
+        function setDefaultProfileUI() {
+            document.getElementById('teacherName').textContent = "User";
+            document.getElementById('teacherEmail').textContent = "Email not available";
+            document.getElementById('teacherPhone').textContent = "Phone not available";
+            document.getElementById('navTeacherName').textContent = "Teacher";
+        }
+        
+        // Function to load application statistics
+        async function loadApplicationStats(token) {
+            try {
+                console.log('Fetching application statistics...');
+                const response = await fetch(`http://localhost:5000/api/teacher-apply/my-applications`, {
+                    method: 'GET',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+
+                console.log('Application stats response status:', response.status);
+
+                if (!response.ok) {
+                    console.error('Failed to fetch application stats with status:', response.status);
+                    // Set defaults and continue
+                    updateApplicationStats(0, 0, 0);
+                    return;
+                }
+
+                const data = await response.json();
+                console.log('Application data received:', data);
+                
+                // Check if we have the applications array in the response
+                if (data.success && Array.isArray(data.applications)) {
+                    const applications = data.applications;
+                    
+                    // Calculate stats
+                    const total = applications.length;
+                    const accepted = applications.filter(app => app.status && app.status.toLowerCase() === 'accepted').length;
+                    const pending = applications.filter(app => !app.status || app.status.toLowerCase() === 'pending').length;
+                    const rejected = applications.filter(app => app.status && app.status.toLowerCase() === 'rejected').length;
+                    
+                    console.log(`Application stats - Total: ${total}, Accepted: ${accepted}, Pending: ${pending}, Rejected: ${rejected}`);
+                    
+                    // Update statistics in the UI
+                    updateApplicationStats(total, accepted, pending);
+                    
+                    // Update last updated date
+                    const now = new Date();
+                    document.getElementById('lastUpdated').textContent = `Last updated: ${now.toLocaleString()}`;
+                } else {
+                    console.warn('Invalid applications data format:', data);
+                    updateApplicationStats(0, 0, 0);
+                }
+
+            } catch (error) {
+                console.error('Error fetching application stats:', error);
+                // Set defaults but don't redirect
+                updateApplicationStats(0, 0, 0);
+            }
+        }
+        
+        // Helper function to update application stats in the UI
+        function updateApplicationStats(total, accepted, pending) {
+            document.getElementById('totalApplications').textContent = total;
+            document.getElementById('acceptedApplications').textContent = accepted;
+            document.getElementById('pendingApplications').textContent = pending;
+            
+            // Update the applications badge
+            const badge = document.getElementById('applicationsBadge');
+            if (badge) {
+                badge.textContent = total;
+                
+                // Hide badge if 0
+                if (total === 0) {
+                    badge.style.display = 'none';
+                } else {
+                    badge.style.display = 'inline-block';
+                }
+            }
+        }
+        
+        // Function to update profile status
+        function updateProfileStatus(status) {
+            console.log('Updating profile status:', status);
+            
+            const statusIndicator = document.getElementById('statusIndicator');
+            const statusDescription = document.getElementById('statusDescription');
+            const reviewItem = document.getElementById('reviewItem');
+            const decisionItem = document.getElementById('decisionItem');
+            
+            // Default to pending if no status
+            status = status || 'pending';
+            
+            // Normalize status to lowercase for comparison
+            const normalizedStatus = status.toLowerCase();
+            console.log('Normalized status:', normalizedStatus);
+            
+            // Update status badge text and colors
+            statusIndicator.textContent = normalizedStatus === 'pending' ? 'Under Review' : 
+                                         normalizedStatus === 'approved' ? 'Approved' : 
+                                         normalizedStatus === 'rejected' ? 'Rejected' : status;
+            
+            // Update status colors based on status
+            if (normalizedStatus === 'approved') {
+                console.log('Setting status to Approved');
+                statusIndicator.style.background = '#4CAF50'; // Green for approved
+                statusDescription.textContent = 'Your application has been approved. You can now apply for vacancies.';
+                
+                // Update timeline - both review and decision are active
+                reviewItem.classList.add('active');
+                decisionItem.classList.add('active');
+                decisionItem.querySelector('p').textContent = 'Application approved';
+            } else if (normalizedStatus === 'rejected') {
+                console.log('Setting status to Rejected');
+                statusIndicator.style.background = '#F44336'; // Red for rejected
+                statusDescription.textContent = 'Unfortunately, your application has been rejected. Please contact support for more information.';
+                
+                // Update timeline - both review and decision are active
+                reviewItem.classList.add('active');
+                decisionItem.classList.add('active');
+                decisionItem.querySelector('p').textContent = 'Application rejected';
+            } else if (normalizedStatus === 'pending') {
+                console.log('Setting status to Under Review');
+                statusIndicator.style.background = '#FF9800'; // Orange for pending/under review
+                statusDescription.textContent = 'Your application is currently under review. We will notify you once there\'s an update.';
+                
+                // Update timeline - only review is active
+                reviewItem.classList.add('active');
+                decisionItem.classList.remove('active');
+            } else {
+                console.log('Setting status to unknown:', status);
+                // For any other status
+                statusIndicator.style.background = '#607D8B'; // Gray for unknown status
+                statusDescription.textContent = `Current status: ${status}. Please contact support for more information.`;
+            }
+        }
+        
+        // Function to show error messages
+        function showError(message) {
+            alert(message);
+        }
+
+        // Logout function
+        function logout() {
+            localStorage.removeItem('token');
+            sessionStorage.clear();
+            window.location.href = 'teacher.html';
+        }
+        
+        // Setup auto-refresh token every 25 minutes to maintain session
+        setInterval(function() {
+            refreshToken();
+        }, 25 * 60 * 1000); // 25 minutes
+        
+        // Function to refresh the token
+        async function refreshToken() {
+            const token = localStorage.getItem('token');
+            if (!token) return;
+            
+            try {
+                const response = await fetch(`http://localhost:5000/api/teacher-apply/refresh-token`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    if (data.token) {
+                        localStorage.setItem('token', data.token);
+                        console.log('Token refreshed successfully');
+                    }
+                }
+            } catch (error) {
+                console.error('Error refreshing token:', error);
+            }
+        }
+
+        // Add event listener for hamburger menu
+        document.addEventListener('DOMContentLoaded', function() {
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', function() {
+                navLinks.classList.toggle('show');
+            });
+        });
+    </script>
+</body>
+</html>

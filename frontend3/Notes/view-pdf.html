@@ -1,0 +1,563 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>नेपाली नोट्स - Dear Sir Home Tuition</title>
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.min.js"></script>
+    
+    <style>
+        .pdf-section {
+            padding: 20px 20px 40px;
+            min-height: calc(100vh - 200px);
+            background: #f8f9fa;
+        }
+
+        .pdf-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            overflow: hidden;
+        }
+
+        .pdf-controls {
+            padding: 15px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: flex-end;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            position: sticky;
+            top: 0;
+            z-index: 10;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: #2A9D8F;
+            cursor: pointer;
+            font-size: 1.6rem;
+            padding: 5px 10px;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .control-btn:hover {
+            color: #238477;
+            transform: translateY(-1px);
+        }
+
+        .pdf-content {
+            padding: 20px;
+            overflow-y: auto;
+            max-height: 80vh;
+        }
+
+        #pdfContainer {
+            width: 100%;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .pdf-page {
+            width: 100%;
+            height: auto;
+            display: block;
+            margin: 0 auto;
+        }
+
+        @media (max-width: 768px) {
+            .pdf-section {
+                padding: 70px 20px 20px;
+            }
+
+            .pdf-controls {
+                padding: 10px;
+            }
+
+            .control-btn {
+                font-size: 1.8rem;
+            }
+        }
+
+        /* Add these new styles for the intro section */
+        .notes-intro {
+            padding: 100px 20px 0;
+            background: #f8f9fa;
+        }
+
+        .intro-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            margin-bottom: 15px;
+        }
+
+        .intro-title {
+            color: #2A9D8F;
+            font-size: 4rem;
+            margin-bottom: 30px;
+            font-weight: 700;
+        }
+
+        .intro-text {
+            font-size: 2rem;
+            line-height: 1.8;
+            color: #444;
+            margin-bottom: 40px;
+        }
+
+        .tips-section {
+            margin-bottom: 25px;
+            padding: 25px;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+
+        .tips-section h2 {
+            color: #2A9D8F;
+            font-size: 2.8rem;
+            margin-bottom: 15px;
+        }
+
+        .tips-section p {
+            font-size: 2rem;
+            line-height: 1.8;
+            margin-bottom: 15px;
+        }
+
+        .tips-section ul {
+            list-style: none;
+            padding-left: 25px;
+        }
+
+        .tips-section li {
+            margin-bottom: 12px;
+            font-size: 2rem;
+            line-height: 1.8;
+        }
+
+        .tips-section strong {
+            color: #2A9D8F;
+        }
+
+        .final-tips {
+            padding: 30px;
+            background: #f0f7f6;
+            border-radius: 8px;
+            border-left: 4px solid #2A9D8F;
+        }
+
+        .final-tips h2 {
+            color: #2A9D8F;
+            font-size: 2.8rem;
+            margin-bottom: 25px;
+        }
+
+        .final-tips p {
+            font-size: 2rem;
+            line-height: 1.8;
+        }
+
+        @media (max-width: 768px) {
+            .notes-intro {
+                padding: 110px 20px 0;
+            }
+            
+            .intro-title {
+                font-size: 3.4rem;
+            }
+
+            .intro-text, .tips-section li, .tips-section p, .final-tips p {
+                font-size: 2.2rem;
+                line-height: 1.8;
+            }
+
+            .tips-section h2, .final-tips h2 {
+                font-size: 2.8rem;
+                margin-bottom: 20px;
+            }
+
+            .tips-section {
+                padding: 25px;
+                margin-bottom: 30px;
+            }
+
+            .tips-section strong {
+                font-size: 2.2rem;
+            }
+
+            .final-tips {
+                padding: 30px;
+                margin-top: 15px;
+            }
+
+            .intro-container {
+                padding: 25px;
+                margin-bottom: 25px;
+            }
+
+            .pdf-intro {
+                font-size: 2.2rem;
+                padding: 20px 0;
+                margin: 20px 0;
+            }
+        }
+
+        /* Add styles for even smaller screens */
+        @media (max-width: 480px) {
+            .intro-title {
+                font-size: 2.8rem;
+            }
+
+            .intro-text, .tips-section li, .tips-section p, .final-tips p {
+                font-size: 1.8rem;
+            }
+
+            .tips-section h2, .final-tips h2 {
+                font-size: 2.4rem;
+            }
+        }
+
+        /* Update the pdf-intro styles */
+        .pdf-intro {
+            font-size: 3rem;  /* Increased from 2.4rem */
+            color: #2A9D8F;
+            text-align: center;
+            font-weight: 600;  /* Made slightly bolder */
+            padding: 25px 0;  /* Increased padding */
+            margin: 30px 0;  /* Increased margin */
+            line-height: 1.4;
+        }
+
+        /* Update mobile styles for pdf-intro */
+        @media (max-width: 768px) {
+            .pdf-intro {
+                font-size: 2.6rem;  /* Increased from 2.2rem */
+                padding: 20px 0;
+                margin: 25px 0;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .pdf-intro {
+                font-size: 2.4rem;  /* Added specific size for smaller screens */
+            }
+        }
+
+        /* Update the view-notes-btn styles */
+        .view-notes-btn-container {
+            text-align: left;  /* Changed from center to left */
+            margin: 20px 0 30px;  /* Reduced margin */
+        }
+
+        .view-notes-btn {
+            background: #2A9D8F;
+            color: white;
+            border: none;
+            padding: 8px 20px;  /* Reduced padding */
+            font-size: 1.8rem;  /* Reduced font size */
+            border-radius: 6px;  /* Slightly smaller radius */
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;  /* Reduced gap */
+        }
+
+        .view-notes-btn i {
+            font-size: 1.6rem;  /* Reduced icon size */
+        }
+
+        .view-notes-btn:hover {
+            background: #238477;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(42, 157, 143, 0.2);
+        }
+
+        .view-notes-btn:hover i {
+            transform: translateY(3px);  /* Slightly reduced animation */
+        }
+
+        /* Mobile styles */
+        @media (max-width: 768px) {
+            .view-notes-btn {
+                font-size: 1.6rem;  /* Reduced mobile font size */
+                padding: 8px 16px;  /* Reduced mobile padding */
+            }
+            
+            .view-notes-btn i {
+                font-size: 1.4rem;  /* Reduced mobile icon size */
+            }
+        }
+    </style>
+    <!-- Add these meta tags at the top of head section -->
+    <meta property="og:title" content="SEE परीक्षामा नेपाली विषयमा A+ ल्याउने टिप्स" />
+    <meta property="og:description" content="SEE परीक्षामा नेपाली विषयमा उच्च अंक प्राप्त गर्ने सम्पूर्ण मार्गदर्शन। व्याकरण, निबन्ध, पत्र, कविता, कथा र उपन्यास सम्बन्धी महत्त्वपूर्ण टिप्स र ट्रिक्स।" />
+    <meta property="og:image" content="https://dearsirhometuition.com/Notes/Nepali1.jpg" />
+    <meta property="og:url" content="https://dearsirhometuition.com/Notes/view-pdf.html?file=Nepali1.pdf" />
+</head>
+<body class="body">
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <img src="../image/logo.png" alt="Dear Sir Home Tuition Logo" onclick="window.location.href='../index.html'" class="logo"/>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../services.html">Services</a></li>
+                <li><a href="../Blog/blog.html">Blog</a></li>
+                <li><a href="https://wa.me/+9779767478036">Contact</a></li>
+                <li><a href="../faq.html">FAQ</a></li>
+                <li><button class="nav-cta" onclick="window.location.href='../Apply/parent.html'">Get Started</button></li>
+            </ul>
+
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Add this section right after the navbar and before the pdf-section -->
+    <section class="notes-intro">
+        <div class="intro-container">
+            <h1 class="intro-title">SEE परीक्षामा Nepali विषयमा A+ ल्याउने टिप्स</h1>
+            
+            <p class="intro-text">
+                SEE परीक्षा सबै विद्यार्थीको लागि एक महत्वपूर्ण मोड हो, र नेपाली विषयमा उच्च अंक ल्याउनु केही चुनौतीपूर्ण पनि हुन सक्छ। तर सही तयारी र अभ्यासले A+ प्राप्त गर्न सहज बनाउन सक्छ। यहाँ नेपाली विषयका विभिन्न खण्डहरू—व्याकरण, निबन्ध, पत्र, कविता, कथा, र उपन्यास—को तयारीका लागि केही उपयोगी टिप्स र ट्रिक्स छन्।
+            </p>
+
+            <!-- Add this after the intro text and before the tips sections -->
+            <div class="view-notes-btn-container">
+                <button class="view-notes-btn" onclick="scrollToNotes()">
+                    Notes हेर्नुहोस् <i class="fas fa-chevron-down"></i>
+                </button>
+            </div>
+
+            <div class="tips-section">
+                <h2>१. व्याकरणमा बलियो पकड बनाउनुहोस्</h2>
+                <p>व्याकरण तपाईंको आधार बनाउँछ। शुद्ध लेखन र सही वाक्य संरचना सिक्न महत्त्वपूर्ण छ।</p>
+                <ul>
+                    <li><strong>Tips</strong>: कारक, काल, समास, र उखान-टुक्काहरूलाई सूचीमा राखेर हरेक दिन अभ्यास गर्नुहोस्।</li>
+                    <li><strong>Trick</strong>: "हुनुहुन्छ" र "हुन्छ" जस्ता प्रचलित गल्तीहरूमा विशेष ध्यान दिनुहोस्। यसले तपाईंलाई व्याकरणमा बलियो बनाउँछ।</li>
+                </ul>
+            </div>
+
+            <div class="tips-section">
+                <h2>२. निबन्ध र पत्र लेखनमा आत्मविश्वास</h2>
+                <p>निबन्ध र पत्र लेखनमा स्पष्टता र राम्रो शब्द चयन महत्त्वपूर्ण हुन्छ।</p>
+                <ul>
+                    <li><strong>Tips</strong>: "शिक्षाको महत्त्व" वा "वातावरण संरक्षण" जस्ता समसामयिक विषयहरूमा अभ्यास गर्नुहोस्। पत्र लेख्नका लागि औपचारिक र अनौपचारिक दुवै ढाँचामा तयारी गर्नुहोस्।</li>
+                    <li><strong>Trick</strong>: निबन्धको सुरुआत आकर्षक वाक्यबाट गर्नुहोस् र अन्त्यमा एक सकारात्मक सन्देश दिनुहोस्।</li>
+                </ul>
+            </div>
+
+            <div class="tips-section">
+                <h2>३. कविता र कथाको भाव बुझ्नुहोस्</h2>
+                <p>कविता र कथामा लेखकको भावनालाई बुझ्न महत्त्वपूर्ण छ।</p>
+                <ul>
+                    <li><strong>Tips</strong>: पाठ्यपुस्तकका कविता (जस्तै: "गाउँको माया") र कथाहरू (जस्तै: "आयाम") को सारांश लेख्नुहोस्। यसले तपाईंलाई सूक्ष्म प्रश्नहरूको उत्तर दिन सजिलो बनाउँछ।</li>
+                    <li><strong>Trick</strong>: कविता पढ्दा हरेक हरफ र कथामा रहेको पात्रको मनोविज्ञानलाई बुझ्ने प्रयास गर्नुहोस्। यसले राम्रो अर्थ निकाल्नमा मद्दत पुर्याउँछ।</li>
+                </ul>
+            </div>
+
+            <div class="tips-section">
+                <h2>४. उपन्यासलाई गहिराइमा अध्ययन गर्नुहोस्</h2>
+                <p>उपन्यासमा मुख्य पात्र, कथावस्तु र सन्देशमा आधारित प्रश्नहरू आउँछन्। यसलाई गहिराइमा अध्ययन गर्नु महत्त्वपूर्ण छ।</p>
+                <ul>
+                    <li><strong>Tips</strong>: "घरको माया" जस्ता एकांकीहरूलाई पटक-पटक पढ्नुहोस् र मुख्य बुँदाहरू टिप्नुहोस्।</li>
+                    <li><strong>Trick</strong>: पात्रहरूको विशेषता र कथाको टर्निङ प्वाइन्टलाई सम्झनुहोस्, जसले परीक्षा गर्दा सोधिने प्रश्नहरूको उत्तर दिन सजिलो बनाउँछ।</li>
+                </ul>
+            </div>
+
+            <div class="tips-section">
+                <h2>५. समय व्यवस्थापन र अभ्यास</h2>
+                <p>परीक्षामा समयको सही उपयोग गर्ने क्षमता निकै महत्त्वपूर्ण छ।</p>
+                <ul>
+                    <li><strong>Tips</strong>: पुराना प्रश्नपत्रहरूको अभ्यास गर्नुहोस् र ३ घण्टाभित्र परीक्षा पूरा गर्ने लक्ष्य राख्नुहोस्।</li>
+                    <li><strong>Trick</strong>: लामो प्रश्नहरूबाट सुरु गर्नुहोस् र छोटा प्रश्नहरूलाई अन्त्यमा गर्नुहोस्। यसले तपाईंलाई समयको सही व्यवस्थापन गर्न मद्दत पुर्याउँछ।</li>
+                </ul>
+            </div>
+
+            <div class="final-tips">
+                <h2>अन्तिम सुझाव</h2>
+                <p>
+                    A+ ल्याउन केवल किताबी ज्ञान मात्रै होइन, आत्मविश्वास र राम्रो प्रस्तुति पनि महत्त्वपूर्ण छन्। नियमित लेख्ने, गल्ती सुधार्ने, र शिक्षकको सल्लाह लिनुहोस्। मेहनत र सही तयारीले SEE मात्र होइन, तपाईंलाई जीवनमा पनि सफलता दिलाउँछ। सफलता तपाईंको हातमा छ! 🌟
+                </p>
+            </div>
+
+            <p class="pdf-intro">
+                तल हाम्रो विद्यार्थीको A+ आएको नोट राखिएको छ।
+            </p>
+        </div>
+    </section>
+
+    <section class="pdf-section">
+        <div class="pdf-container">
+            <div class="pdf-controls">
+                <button class="control-btn" id="downloadBtn" title="Download PDF">
+                    <i class="fas fa-download"></i>
+                </button>
+                <button class="control-btn" id="expandBtn" title="Open in new tab">
+                    <i class="fas fa-expand-arrows-alt"></i>
+                </button>
+            </div>
+            <div class="pdf-content">
+                <div id="pdfContainer"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h2>Contact Us</h2>
+                <div class="contact-info">
+                    <p>
+                        <i class="far fa-envelope"></i>
+                        <a href="mailto:dearsir.tuition@gmail.com">Email: dearsir.tuition@gmail.com</a>
+                    </p>
+                    <p>
+                        <i class="fas fa-phone-alt"></i>
+                        Phone: <a href="tel:+9779767478036">+977-9767478036</a>,
+                        <a href="tel:+9779803941210">+977-9803941210</a>
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Address: Banasthali, Kharibot
+                    </p>
+                </div>
+                <!-- Social Media Links -->
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1PNnUetz7Z/" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://wa.me/+9779846722600" target="_blank" class="social-link">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.instagram.com/dearsirhome?igsh=MWFmaDdvZGg0em9ibQ==" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href="https://youtube.com/@dearsirhometuition?si=Ao-_BuNyDNCQ2gVK" target="_blank" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h2>Quick Links</h2>
+                <ul class="quick-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../services.html">Services</a></li>
+                    <li><a href="../privacy.html">Privacy Policy</a></li>
+                    <li><a href="../notes.html">Study Notes</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 Dear Sir Home Tuition. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="../script.js"></script>
+
+    <script>
+        let pdfDoc = null,
+            scale = 1.5,
+            currentPdfUrl = '';
+
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.11.338/pdf.worker.min.js';
+
+        async function loadPDF(url) {
+            try {
+                currentPdfUrl = url;
+                pdfDoc = await pdfjsLib.getDocument(url).promise;
+                renderAllPages();
+            } catch (error) {
+                console.error('Error loading PDF:', error);
+            }
+        }
+
+        async function renderAllPages() {
+            const container = document.getElementById('pdfContainer');
+            container.innerHTML = ''; // Clear existing content
+
+            for (let pageNum = 1; pageNum <= pdfDoc.numPages; pageNum++) {
+                const canvas = document.createElement('canvas');
+                canvas.className = 'pdf-page';
+                container.appendChild(canvas);
+
+                const page = await pdfDoc.getPage(pageNum);
+                const ctx = canvas.getContext('2d');
+                const viewport = page.getViewport({ scale });
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                await page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                }).promise;
+            }
+        }
+
+        document.getElementById('expandBtn').onclick = () => {
+            if (currentPdfUrl) {
+                window.open(currentPdfUrl, '_blank');
+            }
+        };
+
+        document.getElementById('downloadBtn').onclick = () => {
+            if (currentPdfUrl) {
+                // Create a temporary link element
+                const link = document.createElement('a');
+                link.href = currentPdfUrl;
+                link.download = currentPdfUrl.split('/').pop(); // Get the filename from URL
+                document.body.appendChild(link);
+                link.click();
+                document.body.removeChild(link);
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const pdfFile = urlParams.get('file');
+            
+            if (pdfFile) {
+                loadPDF(pdfFile);
+            } else {
+                window.location.href = '../notes.html';
+            }
+        });
+
+        function scrollToNotes() {
+            const pdfSection = document.querySelector('.pdf-section');
+            pdfSection.scrollIntoView({ behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>

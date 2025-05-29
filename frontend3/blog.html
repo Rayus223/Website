@@ -1,0 +1,298 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Blog - Dear Sir Home Tuition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <div class="nav-brand">
+                <img src="image/logo.png" alt="Dear Sir Home Tuition Logo" onclick="window.location.href='index.html'" class="logo"/>
+            </div>
+            
+            <ul class="nav-links">
+                <li><a href="index.html">Home</a></li>
+                <li><a href="about.html">About</a></li>
+                <li><a href="services.html">Services</a></li>
+                <li><a href="blog.html" class="active">Blog</a></li>
+                <li><a href="contact.html">Contact</a></li>
+                <li><button class="nav-cta" onclick="window.location.href='Apply/parent.html'">Get Started</button></li>
+            </ul>
+
+            <div class="hamburger">
+                <div class="bar"></div>
+                <div class="bar"></div>
+                <div class="bar"></div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Blog Hero Section -->
+    <section class="blog-hero">
+        <div class="blog-hero-content">
+            <h1>Our Blog</h1>
+            <p>Insights, Tips, and Updates from Dear Sir Home Tuition</p>
+        </div>
+    </section>
+
+    <!-- Blog Grid Section -->
+    <section class="blog-grid-section">
+        <div class="container">
+            <div class="blog-grid">
+                <!-- Featured Blog Post -->
+                <article class="blog-card featured" id="ceo-message">
+                    <div class="blog-image">
+                        <img src="image/founder.jpg" alt="Message from CEO">
+                        <span class="category">Leadership</span>
+                    </div>
+                    <div class="blog-content">
+                        <h2>Message from Our CEO: Building the Future of Education</h2>
+                        <p>Dear Students, Parents, and Educational Partners,
+
+                        At Dear Sir Home Tuition, our journey began with a simple yet powerful vision: to transform education through personalized learning experiences. Since 2018, we've been dedicated to nurturing talent, fostering growth, and creating an environment where every student can thrive.
+
+                        Our commitment goes beyond traditional tutoring...</p>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> Jan 20, 2024</span>
+                            <span><i class="far fa-user"></i> Ram Sharma</span>
+                            <span><i class="far fa-clock"></i> 7 min read</span>
+                        </div>
+                        <a href="blog-post-ceo.html" class="read-more">Read Full Message <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Regular Blog Posts -->
+                <article class="blog-card">
+                    <div class="blog-image">
+                        <img src="image/blog/post-1.jpg" alt="Blog Post">
+                        <span class="category">Tips</span>
+                    </div>
+                    <div class="blog-content">
+                        <h3>Effective Study Techniques for Students</h3>
+                        <p>Learn proven methods to enhance your study efficiency and retain information better.</p>
+                        <div class="blog-meta">
+                            <span><i class="far fa-calendar"></i> Jan 12, 2024</span>
+                            <span><i class="far fa-clock"></i> 3 min read</span>
+                        </div>
+                        <a href="blog-post.html" class="read-more">Read More <i class="fas fa-arrow-right"></i></a>
+                    </div>
+                </article>
+
+                <!-- Add more blog cards as needed -->
+            </div>
+        </div>
+    </section>
+
+<style>
+/* Blog Page Styles */
+.blog-hero {
+    height: 40vh;
+    background: linear-gradient(rgba(0, 0, 0, 0.6), rgba(0, 0, 0, 0.6)), url('image/blog/hero-bg.jpg');
+    background-size: cover;
+    background-position: center;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    margin-top: 80px;
+}
+
+.blog-hero-content h1 {
+    font-size: 4.5em;
+    margin-bottom: 15px;
+}
+
+.blog-hero-content p {
+    font-size: 2em;
+    opacity: 0.9;
+}
+
+.blog-grid-section {
+    padding: 80px 0;
+    background: #f8f9fa;
+}
+
+.blog-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 30px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+.blog-card {
+    background: white;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.blog-card:hover {
+    transform: translateY(-5px);
+}
+
+.blog-card.featured {
+    grid-column: 1 / -1;
+    display: grid;
+    grid-template-columns: 1fr 1.5fr;
+    gap: 0;
+}
+
+.blog-card.featured .blog-image img {
+    height: 100%;
+    object-fit: cover;
+}
+
+.blog-card.featured .blog-content {
+    padding: 40px 50px;
+}
+
+.blog-image {
+    position: relative;
+    height: 240px;
+}
+
+.blog-card.featured .blog-image {
+    height: 100%;
+}
+
+.blog-image img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.category {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background: #2563EB;
+    color: white;
+    padding: 5px 15px;
+    border-radius: 20px;
+    font-size: 1.4em;
+}
+
+.blog-content {
+    padding: 25px;
+}
+
+.blog-card.featured .blog-content {
+    padding: 40px;
+}
+
+.blog-content h2 {
+    font-size: 2.8em;
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.blog-content h3 {
+    font-size: 2.2em;
+    margin-bottom: 15px;
+    color: #2d3748;
+}
+
+.blog-content p {
+    font-size: 1.6em;
+    color: #4a5568;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.blog-meta {
+    display: flex;
+    gap: 20px;
+    font-size: 1.4em;
+    color: #718096;
+    margin-bottom: 20px;
+}
+
+.blog-meta i {
+    margin-right: 5px;
+}
+
+.read-more {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.6em;
+    color: #2563EB;
+    text-decoration: none;
+    transition: gap 0.3s ease;
+}
+
+.read-more:hover {
+    gap: 15px;
+}
+
+@media (max-width: 768px) {
+    .blog-card.featured {
+        grid-template-columns: 1fr;
+    }
+    
+    .blog-card.featured .blog-image {
+        height: 300px;
+    }
+    
+    #ceo-message .blog-content::before {
+        font-size: 6em;
+    }
+}
+
+#ceo-message {
+    scroll-margin-top: 100px; /* Ensures proper scrolling with fixed navbar */
+    background: linear-gradient(to right, #f8fafc, #fff);
+    border: 1px solid #e2e8f0;
+}
+
+#ceo-message .blog-content {
+    position: relative;
+}
+
+#ceo-message .blog-content::before {
+    content: '"';
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    font-size: 8em;
+    color: rgba(37, 99, 235, 0.1);
+    font-family: serif;
+    line-height: 1;
+}
+
+#ceo-message:target {
+    animation: highlight 1s ease;
+}
+
+@keyframes highlight {
+    0% {
+        background-color: rgba(37, 99, 235, 0.1);
+    }
+    100% {
+        background-color: transparent;
+    }
+}
+</style>
+
+    <script src="script.js"></script>
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        if(window.location.hash === '#ceo-message') {
+            const element = document.querySelector('#ceo-message');
+            if(element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+    });
+    </script>
+</body>
+</html> 

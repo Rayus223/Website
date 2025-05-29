@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+     <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+
+      gtag('config', 'G-DXKBVVB6PF');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Contact - Dear Sir Home Tuition</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.1/css/all.min.css">
+</head>
+<body>
+    <!-- Navbar -->
+    
+    
+   <!-- Navbar -->
+<nav class="navbar">
+    <div class="nav-content">
+      <div class="nav-brand">
+        <img src="image/logo.png" alt="Dear Sir Home Tuition Logo" onclick="window.location.href='index.html'" class="logo"/>
+      </div>
+      
+      <ul class="nav-links">
+        <li><a href="index.html" class="active">Home</a></li>
+        <li><a href="about.html">About</a></li>
+        <li><a href="services.html">Services</a></li>
+        <li><a href="https://wa.me/+9779767478036">Contact</a></li>
+        <li><a href="faq.html">FAQ</a></li>
+        <li><button class="nav-cta" onclick="window.location.href='Apply/parent.html'">Get Started</button></li>
+      </ul>
+  
+      <div class="hamburger">
+        <div class="bar"></div>
+        <div class="bar"></div>
+        <div class="bar"></div>
+      </div>
+    </div>
+  </nav>
+  
+  
+      <!-- End of Navbar  -->
+
+    <!-- Contact Section -->
+    <section class="contact-section fade-in">
+        <h1 class="section-heading">Contact Us</h1>
+        
+        <div class="contact-container">
+            <!-- Contact Information -->
+            <div class="contact-info">
+                <h2>Get in Touch</h2>
+                <div class="info-item">
+                    <i class="fas fa-map-marker-alt"></i>
+                    <p>123 Education Street, City, Country</p>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-phone"></i>
+                    <p>+977 9812345678</p>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-envelope"></i>
+                    <p>info@dearsirtuition.com</p>
+                </div>
+                <div class="social-links">
+                    <a href="#" class="social-link"><i class="fab fa-facebook"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-instagram"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-twitter"></i></a>
+                    <a href="#" class="social-link"><i class="fab fa-linkedin"></i></a>
+                </div>
+            </div>
+
+            <!-- Contact Form -->
+            <div class="contact-form">
+                <h2>Send us a Message</h2>
+                <form id="contactForm">
+                    <div class="form-group">
+                        <input type="text" id="name" required>
+                        <label for="name">Your Name</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="email" required>
+                        <label for="email">Your Email</label>
+                    </div>
+                    <div class="form-group">
+                        <input type="tel" id="phone" required>
+                        <label for="phone">Your Phone</label>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="message" required></textarea>
+                        <label for="message">Your Message</label>
+                    </div>
+                    <button type="submit" class="submit-btn">Send Message</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+  
+   
+
+    <script src="script.js"></script>
+    
+  
+    <script>
+        function showPopup(message, type = 'success') {
+            const popup = document.getElementById('messagePopup');
+            const popupMessage = document.getElementById('popupMessage');
+            
+            popup.style.display = 'flex';
+            popup.classList.add('show', type);
+            popupMessage.textContent = message;
+            
+            // Prevent scrolling of background
+            document.body.style.overflow = 'hidden';
+        }
+        
+        function closePopup() {
+            const popup = document.getElementById('messagePopup');
+            popup.classList.remove('show', 'success', 'error');
+            setTimeout(() => {
+                popup.style.display = 'none';
+                // Restore scrolling
+                document.body.style.overflow = 'auto';
+            }, 300);
+        }
+        
+        document.getElementById('contactForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const name = document.getElementById('name').value;
+            const email = document.getElementById('email').value;
+            const phone = document.getElementById('phone').value;
+            const message = document.getElementById('message').value;
+            
+            try {
+                const response = await fetch('http://localhost:5000/api/contact/submit', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ 
+                        name, 
+                        email, 
+                        phone,
+                        message 
+                    })
+                });
+        
+                const data = await response.json();
+        
+                if (response.ok) {
+                    showPopup('Message sent successfully! We will get back to you soon.', 'success');
+                    document.getElementById('contactForm').reset();
+                    // Reset floating labels
+                    document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+                        input.classList.remove('has-value');
+                    });
+                } else {
+                    showPopup(data.message || 'Failed to send message. Please try again.', 'error');
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showPopup('An error occurred. Please try again.', 'error');
+            }
+        });
+        
+        // Floating labels handler
+        document.querySelectorAll('.form-group input, .form-group textarea').forEach(input => {
+            input.addEventListener('input', function() {
+                if (this.value) {
+                    this.classList.add('has-value');
+                } else {
+                    this.classList.remove('has-value');
+                }
+            });
+        });
+        </script>
+              
+      
+</body>
+</html>

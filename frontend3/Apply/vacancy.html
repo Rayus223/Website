@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="icon" href="/image/favicon.ico" type="image/x-icon">
+    
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-DXKBVVB6PF"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'G-DXKBVVB6PF');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta property="og:title" content="Teacher Vacancy - Dear Sir Home Tuition">
+    <meta property="og:description" content="View this teaching opportunity at Dear Sir Home Tuition">
+    <meta property="og:image" content="/image/logo.png">
+    <title>Vacancy Details - Dear Sir Home Tuition</title>
+    <link rel="stylesheet" href="../style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script type="module">
+        import { config } from '../config.js';
+        window.API_BASE_URL = config.API_BASE_URL;
+    </script>
+    <style>
+        /* Custom styles for shared vacancy page */
+        .single-vacancy-container {
+            max-width: 800px;
+            margin: 40px auto;
+            background-color: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            font-size: 16px;
+        }
+
+        .loading-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 50px 0;
+            color: #1e4d92;
+            font-size: 1.2rem;
+        }
+
+        .loading-container i {
+            font-size: 2.5rem;
+            margin-bottom: 15px;
+        }
+
+        .single-vacancy-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 20px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .vacancy-title-section h1 {
+            font-size: 3rem;
+            color: #1e4d92;
+            margin-bottom: 10px;
+        }
+
+        .vacancy-meta-tags {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .vacancy-meta-tag {
+            background-color: #f1f7ff;
+            color: #1e4d92;
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 1.3rem;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .vacancy-status {
+            padding: 8px 15px;
+            border-radius: 20px;
+            font-weight: 500;
+            font-size: 1.4rem;
+        }
+
+        .status-open {
+            background-color: #e6f7e6;
+            color: #2d8a2d;
+        }
+
+        .status-closed {
+            background-color: #ffe6e6;
+            color: #d13030;
+        }
+
+        .vacancy-description {
+            margin: 25px 0;
+            color: #555;
+            line-height: 1.8;
+            font-size: 1.5rem;
+        }
+
+        .vacancy-requirements-box {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+        }
+
+        .vacancy-requirements-box h3 {
+            color: #1e4d92;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 1.8rem;
+        }
+
+        .requirements-list {
+            list-style-type: none;
+            padding: 0;
+        }
+
+        .requirements-list li {
+            padding: 8px 0 8px 30px;
+            position: relative;
+            font-size: 1.5rem;
+        }
+
+        .requirements-list li:before {
+            content: "\f00c";
+            font-family: "Font Awesome 5 Free";
+            font-weight: 900;
+            position: absolute;
+            left: 0;
+            color: #2d8a2d;
+        }
+
+        .vacancy-salary-section {
+            background-color: #f1f7ff;
+            border-radius: 8px;
+            padding: 20px;
+            margin: 25px 0;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .salary-icon {
+            font-size: 1.8rem;
+            color: #1e4d92;
+            background-color: white;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .salary-details {
+            flex: 1;
+        }
+
+        .salary-details h3 {
+            margin-bottom: 5px;
+            color: #1e4d92;
+            font-size: 1.8rem;
+        }
+
+        .salary-details p {
+            color: #555;
+            font-size: 1.7rem;
+            font-weight: 500;
+        }
+
+        .vacancy-actions-container {
+            display: flex;
+            gap: 15px;
+            margin-top: 40px;
+        }
+
+        .action-btn {
+            padding: 18px 35px;
+            border-radius: 6px;
+            font-weight: 700;
+            font-size: 1.5rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            transition: all 0.3s ease;
+            border: none;
+        }
+
+        .apply-action-btn {
+            background-color: #1e4d92;
+            color: white;
+            flex: 3;
+            box-shadow: 0 4px 10px rgba(30, 77, 146, 0.2);
+        }
+
+        .apply-action-btn:hover {
+            background-color: #153a6f;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 12px rgba(30, 77, 146, 0.3);
+        }
+
+        .share-action-btn {
+            background-color: #f1f1f1;
+            color: #333;
+            flex: 1;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .share-action-btn:hover {
+            background-color: #e0e0e0;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 10px rgba(0, 0, 0, 0.15);
+        }
+
+        .back-btn {
+            display: none;
+        }
+
+        /* Error styling */
+        #error {
+            text-align: center;
+            padding: 30px;
+        }
+
+        #error h2 {
+            color: #d13030;
+            margin-bottom: 15px;
+        }
+
+        #error p {
+            color: #555;
+            margin-bottom: 20px;
+        }
+
+        @media (max-width: 768px) {
+            .single-vacancy-container {
+                margin: 20px 10px;
+                padding: 20px;
+            }
+            
+            .single-vacancy-header {
+                flex-direction: column;
+            }
+            
+            .vacancy-status {
+                margin-top: 15px;
+                align-self: flex-start;
+            }
+            
+            .vacancy-actions-container {
+                flex-direction: column;
+            }
+
+            .vacancy-title-section h1 {
+                font-size: 3rem;
+            }
+            
+            .vacancy-meta-tag {
+                font-size: 2.1rem;
+            }
+            
+            .vacancy-status {
+                font-size: 2.1rem;
+            }
+            
+            .location-section, .time-section, .class-section, .gender-section {
+                font-size: 2.1rem !important;
+            }
+            
+            .gender-tag {
+                font-size: 2.1rem !important;
+            }
+            
+            .vacancy-description {
+                font-size: 2rem;
+            }
+            
+            .salary-section {
+                font-size: 2.5rem !important;
+            }
+            .location-section i, .time-section i, .class-section i, .gender-section i {
+                font-size: 2.1rem !important;
+            }
+        }
+
+        /* Share button animation */
+        .share-action-btn {
+            position: relative;
+            overflow: hidden;
+        }
+
+        .share-action-btn:after {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 5px;
+            height: 5px;
+            background: rgba(255, 255, 255, 0.5);
+            opacity: 0;
+            border-radius: 100%;
+            transform: scale(1, 1) translate(-50%);
+            transform-origin: 50% 50%;
+        }
+
+        .share-action-btn:focus:not(:active)::after {
+            animation: ripple 1s ease-out;
+        }
+
+        @keyframes ripple {
+            0% {
+                transform: scale(0, 0);
+                opacity: 0.5;
+            }
+            20% {
+                transform: scale(25, 25);
+                opacity: 0.5;
+            }
+            100% {
+                opacity: 0;
+                transform: scale(40, 40);
+            }
+        }
+
+        .location-section, .time-section, .class-section, .gender-section {
+            margin: 10px 0;
+            color: #555;
+            font-size: 1.6rem;
+            padding: 5px 0;
+        }
+
+        .location-section i, .time-section i, .class-section i, .gender-section i {
+            color: #1e4d92;
+            margin-right: 8px;
+            width: 20px;
+            font-size: 1.6rem;
+        }
+
+        .gender-tag {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 1.6rem;
+            font-weight: 500;
+        }
+        
+        .gender-tag.male {
+            background-color: #e8f4ff;
+            color: #1e4d92;
+        }
+        
+        .gender-tag.female {
+            background-color: #ffe8f4;
+            color: #d41c81;
+        }
+        
+        .gender-tag.any {
+            background-color: #f0f0f0;
+            color: #555;
+        }
+
+        .salary-section {
+            margin: 15px 0;
+            color: #2d8a2d;
+            font-weight: 600;
+            font-size: 2rem;
+        }
+
+        .salary-section i {
+            margin-right: 8px;
+            font-size: 1.5rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navbar -->
+    <nav class="navbar">
+        <div class="nav-content">
+            <a href="/" class="nav-brand">
+                <img src="../image/logo.png" alt="Dear Sir Logo" class="logo">
+            </a>
+            <ul class="nav-links">
+                <li><a href="../index.html">Home</a></li>
+                <li><a href="../about.html">About</a></li>
+                <li><a href="../services.html">Services</a></li>
+                <li><a href="../Blog/blog.html">Blog</a></li>
+                <li><a href="https://wa.me/+9779767478036">Contact</a></li>
+                <li><a href="../faq.html">FAQ</a></li>
+                <li><button class="nav-cta" onclick="window.location.href='parent.html'">Get Started</button></li>
+                <li id="profileContainer" class="nav-item">
+                    <div class="profile-dropdown">
+                        <div class="profile-trigger">
+                            <i class="fas fa-user-circle"></i>
+                        </div>
+                        <div class="dropdown-content">
+                            <a href="teacherProfile.html"><i class="fas fa-tachometer-alt"></i> Dashboard</a>
+                            <a href="vacancies.html"><i class="fas fa-briefcase"></i> View Vacancies</a>
+                            <a href="myApplications.html"><i class="fas fa-file-alt"></i> My Applications</a>
+                            <a href="editProfile.html"><i class="fas fa-user-edit"></i> Edit Profile</a>
+                            <a href="#" onclick="logoutTeacher()"><i class="fas fa-sign-out-alt"></i> Logout</a>
+                        </div>
+                    </div>
+                </li>
+            </ul>
+            <div class="hamburger">
+                <span class="bar"></span>
+                <span class="bar"></span>
+                <span class="bar"></span>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <div class="container">
+        <div id="vacancyContainer" class="single-vacancy-container">
+            <div id="loading" class="loading-container">
+                <i class="fas fa-spinner fa-pulse"></i>
+                <p>Loading vacancy details...</p>
+            </div>
+            
+            <div id="vacancyDetails" style="display: none;">
+                <!-- Vacancy details will be populated by JavaScript -->
+            </div>
+            
+            <div id="error" style="display: none;">
+                <h2>Vacancy Not Found</h2>
+                <p>Sorry, we couldn't find the vacancy you're looking for.</p>
+                <p>Please check the URL or browse all available vacancies.</p>
+                <button class="action-btn apply-action-btn" onclick="window.location.href='vacancies.html'">
+                    View All Vacancies
+                </button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Footer -->
+    <footer class="footer">
+        <div class="footer-content">
+            <!-- Contact Info -->
+            <div class="footer-section">
+                <h2>Contact Us</h2>
+                <div class="contact-info">
+                    <p>
+                        <i class="far fa-envelope"></i>
+                        <a href="mailto:dearsir.tuition@gmail.com">Email: dearsir.tuition@gmail.com</a>
+                    </p>
+                    <p>
+                        <i class="fas fa-phone-alt"></i>
+                        Phone: <a href="tel:+9779767478036">+977-9767478036</a>,
+                        <a href="tel:+9779803941210">+977-9803941210</a>
+                    </p>
+                    <p>
+                        <i class="fas fa-map-marker-alt"></i>
+                        Address: Banasthali, Kharibot
+                    </p>
+                </div>
+                <!-- Social Media Links -->
+                <div class="social-links">
+                    <a href="https://www.facebook.com/share/1PNnUetz7Z/" target="_blank" class="social-link">
+                        <i class="fab fa-facebook"></i>
+                    </a>
+                    <a href="https://wa.me/+9779846722600" target="_blank" class="social-link">
+                        <i class="fab fa-whatsapp"></i>
+                    </a>
+                    <a href="https://www.instagram.com/dearsirhome?igsh=MWFmaDdvZGg0em9ibQ==" target="_blank" class="social-link">
+                        <i class="fab fa-instagram"></i>
+                    </a>
+                    <a href=https://youtube.com/@dearsirhometuition?si=Ao-_BuNyDNCQ2gVK target="_blank" class="social-link">
+                        <i class="fab fa-youtube"></i>
+                    </a>
+                </div>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="footer-section">
+                <h2>Quick Links</h2>
+                <ul class="quick-links">
+                    <li><a href="../index.html">Home</a></li>
+                    <li><a href="../about.html">About</a></li>
+                    <li><a href="../services.html">Services</a></li>
+                    <li><a href="../privacy.html">Privacy Policy</a></li>
+                    <li><a href="../notes.html">Study Notes</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- Copyright -->
+        <div class="footer-bottom">
+            <p>&copy; 2024 Dear Sir Home Tuition. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <div class="floating-contact">
+        <a href="tel:+977-9846722600" class="contact-btn">
+            <i class="fas fa-phone-alt"></i>
+            <span>Call 9846722600</span>
+        </a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const vacancyId = urlParams.get('id');
+            
+            if (vacancyId) {
+                fetchVacancyDetails(vacancyId);
+            } else {
+                showError();
+            }
+            
+            // Mobile menu toggle
+            const hamburger = document.querySelector('.hamburger');
+            const navLinks = document.querySelector('.nav-links');
+            
+            hamburger.addEventListener('click', () => {
+                hamburger.classList.toggle('active');
+                navLinks.classList.toggle('active');
+            });
+            
+            // Check login status and update UI
+            checkLoginStatus();
+        });
+        
+        async function fetchVacancyDetails(vacancyId) {
+            try {
+                const response = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/vacancies/${vacancyId}`);
+                
+                if (!response.ok) {
+                    throw new Error('Failed to fetch vacancy details');
+                }
+                
+                const vacancy = await response.json();
+                displayVacancyDetails(vacancy);
+                
+                // Update page metadata for better sharing
+                document.title = `${vacancy.title} - Dear Sir Home Tuition`;
+                document.querySelector('meta[property="og:title"]').setAttribute('content', `${vacancy.title} - Dear Sir Home Tuition`);
+                document.querySelector('meta[property="og:description"]').setAttribute('content', `${vacancy.description.substring(0, 100)}...`);
+                
+            } catch (error) {
+                console.error('Error fetching vacancy details:', error);
+                showError();
+            }
+        }
+        
+        function displayVacancyDetails(vacancy) {
+            const vacancyDetails = document.getElementById('vacancyDetails');
+            const loading = document.getElementById('loading');
+            
+            // Create HTML for vacancy details
+            vacancyDetails.innerHTML = `
+                <div class="single-vacancy-header">
+                    <div class="vacancy-title-section">
+                        <h1>${vacancy.title}</h1>
+                        <div class="vacancy-meta-tags">
+                            <span class="vacancy-meta-tag"><i class="fas fa-book"></i> ${vacancy.subject}</span>
+                              </div>
+                    </div>
+                    <div class="vacancy-status ${vacancy.status === 'open' ? 'status-open' : 'status-closed'}">
+                        <i class="fas ${vacancy.status === 'open' ? 'fa-door-open' : 'fa-door-closed'}"></i>
+                        ${vacancy.status.toUpperCase()}
+                    </div>
+                </div>
+                
+                <div class="location-section">
+                    <i class="fas fa-map-marker-alt"></i> ${vacancy.location || 'Location not specified'}
+                </div>
+                
+                <div class="time-section">
+                    <i class="fas fa-clock"></i> ${vacancy.time || 'Time not specified'}
+                </div>
+                
+                <div class="class-section">
+                    <i class="fas fa-graduation-cap"></i> Class ${vacancy.class || 'not specified'}
+                </div>
+                
+                <div class="gender-section">
+                    <i class="fas fa-venus-mars"></i> 
+                    <span class="gender-tag ${vacancy.gender === 'male' ? 'male' : vacancy.gender === 'female' ? 'female' : 'any'}">
+                        ${vacancy.gender ? (vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)) : 'Any'} Teacher
+                    </span>
+                </div>
+                
+                <div class="vacancy-description">
+                    <p>${vacancy.description || 'Experienced teacher with required qualification are requested to apply'}</p>
+                </div>
+                
+                <div class="salary-section">
+                    <i class="fas fa-money-bill-wave"></i> Rs. ${vacancy.salary || 'Not specified'}
+                </div>
+                
+                <div class="vacancy-actions-container">
+                    <button class="action-btn apply-action-btn" onclick="applyForVacancy('${vacancy._id}')">
+                        <i class="fas fa-paper-plane"></i> Apply Now
+                    </button>
+                    <button class="action-btn share-action-btn" onclick="shareThisVacancy('${vacancy._id}', '${encodeURIComponent(vacancy.title)}')">
+                        <i class="fas fa-share-alt"></i> Share
+                    </button>
+                </div>
+            `;
+            
+            // Show vacancy details and hide loading
+            loading.style.display = 'none';
+            vacancyDetails.style.display = 'block';
+        }
+        
+        function showError() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('error').style.display = 'block';
+        }
+        
+        function shareThisVacancy(vacancyId, vacancyTitle) {
+            // Create share URL (current URL)
+            const shareUrl = window.location.href;
+            
+            // Check if Web Share API is available
+            if (navigator.share) {
+                navigator.share({
+                    title: `${decodeURIComponent(vacancyTitle)} - Dear Sir Home Tuition`,
+                    text: `Check out this vacancy for ${decodeURIComponent(vacancyTitle)} at Dear Sir Home Tuition!`,
+                    url: shareUrl
+                })
+                .then(() => console.log('Share successful'))
+                .catch((error) => console.log('Error sharing', error));
+            } else {
+                // Fallback for browsers that don't support Web Share API
+                // Create a temporary input to copy the URL
+                const tempInput = document.createElement('input');
+                document.body.appendChild(tempInput);
+                tempInput.value = shareUrl;
+                tempInput.select();
+                document.execCommand('copy');
+                document.body.removeChild(tempInput);
+                
+                // Show notification
+                Swal.fire({
+                    title: 'Link Copied!',
+                    text: 'Share it with your friends or colleagues',
+                    icon: 'success',
+                    timer: 2000,
+                    showConfirmButton: false
+                });
+            }
+        }
+        
+        function applyForVacancy(vacancyId) {
+            const token = localStorage.getItem('token');
+            
+            if (!token) {
+                // Redirect to login/register page
+                window.location.href = 'teacher.html?redirect=' + encodeURIComponent(window.location.href);
+                return;
+            }
+            
+            // Show policy agreement before submission
+            showPolicyAgreement(vacancyId, token);
+        }
+        
+        async function showPolicyAgreement(vacancyId, token) {
+            const result = await Swal.fire({
+                title: 'Policy Agreement',
+                html: `
+                    <div style="text-align: left; margin-bottom: 20px;">
+                        <h3 style="font-size: 2rem; color: #1e4d92; margin-bottom: 15px;">Please read and agree to the following terms:</h3>
+                        
+                        <div style="border-left: 3px solid #1e4d92; padding-left: 20px; margin: 20px 0;">
+                            <p style="margin-bottom: 15px; font-size: 2rem;"><strong>1.</strong> A 30% pre-payment service fee must be paid by the teacher to the company.</p>
+                            
+                            <p style="margin-bottom: 15px; font-size: 2rem;"><strong>2.</strong> If the tuition is rejected by the parents and the teacher notifies us within 3 days of the start date, a full refund will be issued.</p>
+                            
+                            <p style="margin-bottom: 15px; font-size: 2rem;"><strong>3.</strong> If the teacher fails to inform us within the specified time, the company will not be liable for any refund.</p>
+                        </div>
+                    </div>
+                `,
+                icon: 'info',
+                showCancelButton: true,
+                confirmButtonColor: '#1e4d92',
+                cancelButtonColor: '#d33',
+                confirmButtonText: '<p style="font-size: 1.5rem;">I Agree</p>',
+                cancelButtonText: '<p style="font-size: 1.5rem;">Cancel</p>',
+                focusConfirm: false
+            });
+            
+            if (result.isConfirmed) {
+                // If user agrees to policy, submit application
+                submitApplication(vacancyId, token);
+            }
+        }
+        
+        async function submitApplication(vacancyId, token) {
+            try {
+                Swal.fire({
+                    title: 'Submitting application...',
+                    text: 'Please wait',
+                    allowOutsideClick: false,
+                    showConfirmButton: false,
+                    willOpen: () => {
+                        Swal.showLoading();
+                    }
+                });
+                
+                // First get the vacancy details to check if already applied
+                const vacancyResponse = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/vacancies/${vacancyId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                if (!vacancyResponse.ok) {
+                    throw new Error('Failed to fetch vacancy details');
+                }
+                
+                const vacancyData = await vacancyResponse.json();
+                
+                // Get teacher ID from token
+                const payload = JSON.parse(atob(token.split('.')[1]));
+                const teacherId = payload.id;
+                
+                // Check if already applied
+                const applications = vacancyData.applications || [];
+                const alreadyApplied = applications.some(app => {
+                    // Ensure we're comparing strings for consistency
+                    const applicationTeacherId = app.teacher?._id 
+                        ? String(app.teacher._id) 
+                        : app.teacher 
+                            ? String(app.teacher) 
+                            : '';
+                    
+                    return applicationTeacherId === String(teacherId);
+                });
+                
+                if (alreadyApplied) {
+                    Swal.fire({
+                        title: 'Already Applied',
+                        text: 'You have already applied to this vacancy. Please wait for a response.',
+                        icon: 'info',
+                        confirmButtonColor: '#1e4d92'
+                    });
+                    return;
+                }
+                
+                const response = await fetch(`${window.API_BASE_URL || 'http://localhost:5000'}/api/teacher-apply/apply-vacancy/${vacancyId}`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    }
+                });
+                
+                const data = await response.json();
+                
+                if (data.success) {
+                    Swal.fire({
+                        title: 'Success!',
+                        text: 'Your application has been successfully submitted.',
+                        icon: 'success',
+                        timer: 2000,
+                        showConfirmButton: false
+                    }).then(() => {
+                        // Automatically redirect to vacancies page after the alert
+                        window.location.href = 'vacancies.html';
+                    });
+                } else {
+                    // Check if this is the "already applied" error
+                    if (data.message && data.message.includes('already applied')) {
+                        Swal.fire({
+                            title: 'Already Applied',
+                            text: 'You have already applied to this vacancy. Please wait for a response.',
+                            icon: 'info',
+                            confirmButtonColor: '#1e4d92'
+                        });
+                    } else {
+                        Swal.fire({
+                            title: 'Error',
+                            text: data.message || 'Failed to submit application',
+                            icon: 'error'
+                        });
+                    }
+                }
+                
+            } catch (error) {
+                console.error('Error applying:', error);
+                Swal.fire({
+                    title: 'Error',
+                    text: 'An error occurred while submitting your application. Please try again.',
+                    icon: 'error'
+                });
+            }
+        }
+        
+        function checkLoginStatus() {
+            const token = localStorage.getItem('token');
+            const profileContainer = document.getElementById('profileContainer');
+            
+            if (token) {
+                // User is logged in, show profile dropdown
+                profileContainer.style.display = 'block';
+            } else {
+                // User is not logged in, hide profile dropdown
+                profileContainer.style.display = 'none';
+            }
+        }
+        
+        function logoutTeacher() {
+            localStorage.removeItem('token');
+            localStorage.removeItem('userData');
+            window.location.href = '../index.html';
+        }
+    </script>
+</body>
+</html> 
