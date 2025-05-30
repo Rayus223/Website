@@ -3245,11 +3245,14 @@ const budgetColumns = [
         showAllBudget, 
         setShowAllBudget, 
         initialLoadCount, 
-        getLimitedData 
+        getLimitedData,
+        budgetData,
+        budgetActiveTab,
+        setBudgetActiveTab
     }) => {
         const handleTabChange = useCallback((newTab) => {
             setBudgetActiveTab(newTab);
-        }, []);
+        }, [setBudgetActiveTab]);
 
         // Add state for expenses modal
         const [expenseModalVisible, setExpenseModalVisible] = useState(false);
@@ -3267,7 +3270,7 @@ const budgetColumns = [
             
             // Limit data if needed
             return getLimitedData(sortedData, showAllBudget);
-        }, [budgetData, budgetActiveTab, showAllBudget]);
+        }, [budgetData, budgetActiveTab, showAllBudget, getLimitedData]);
 
         // Memoize calculations
         const { totalPayments, totalRefunds, totalExpenses, netAmount, pendingAmount } = useMemo(() => {
@@ -3645,6 +3648,9 @@ const budgetColumns = [
                 setShowAllBudget={setShowAllBudget}
                 initialLoadCount={initialLoadCount}
                 getLimitedData={getLimitedData}
+                budgetData={budgetData}
+                budgetActiveTab={budgetActiveTab}
+                setBudgetActiveTab={setBudgetActiveTab}
             />
         }
     ];
