@@ -14,7 +14,7 @@ const ParentList = () => {
     const [showTrash, setShowTrash] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(1000);
+    const [pageSize, setPageSize] = useState(10);
     const navigate = useNavigate();
 
     // Add table change handler
@@ -259,7 +259,7 @@ const ParentList = () => {
     };
 
     useEffect(() => {
-        const ws = new WebSocket('ws://api.dearsirhometuition.com');
+        const ws = new WebSocket('wss://api.dearsirhometuition.com');
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
