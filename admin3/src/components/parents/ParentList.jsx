@@ -259,7 +259,7 @@ const ParentList = () => {
     };
 
     useEffect(() => {
-        const ws = new WebSocket('ws://api.dearsirhometuition.com');
+        const ws = new WebSocket('wss://api.dearsirhometuition.com');
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
