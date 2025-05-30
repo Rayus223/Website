@@ -3850,7 +3850,7 @@ Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
             }
             
             // Get base URL
-            const baseUrl = process.env.REACT_APP_API_URL || 'http://localhost:5000';
+            const baseUrl = process.env.REACT_APP_API_URL || 'https://api.dearsirhometuition.com';
             
             try {
                 // Get all parents and find the one with matching ID

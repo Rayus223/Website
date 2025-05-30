@@ -32,8 +32,8 @@ const ParentList = () => {
         try {
             // Update the endpoint to fetch either active or trashed parents
             const endpoint = showTrash 
-                ? 'http://localhost:5000/api/parents/trash'
-                : 'http://localhost:5000/api/parents/all';
+                ? 'https://api.dearsirhometuition.com/api/parents/trash'
+                : 'https://api.dearsirhometuition.com/api/parents/all';
             
             const response = await fetch(endpoint);
             const data = await response.json();
@@ -73,7 +73,7 @@ const ParentList = () => {
 
     const handleMoveToTrash = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/parents/${id}/trash`, {
+            const response = await fetch(`https://api.dearsirhometuition.com/api/parents/${id}/trash`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -97,7 +97,7 @@ const ParentList = () => {
 
     const handlePermanentDelete = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/parents/${id}`, {
+            const response = await fetch(`https://api.dearsirhometuition.com/api/parents/${id}`, {
                 method: 'DELETE'
             });
             
@@ -117,7 +117,7 @@ const ParentList = () => {
 
     const handleRestore = async (id) => {
         try {
-            const response = await fetch(`http://localhost:5000/api/parents/${id}/restore`, {
+            const response = await fetch(`https://api.dearsirhometuition.com/api/parents/${id}/restore`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -206,7 +206,7 @@ const ParentList = () => {
             console.log('Vacancy created with ID:', newVacancyId);
 
             // Then update the parent with the vacancy reference and change status to pending
-            const updateResponse = await fetch(`http://localhost:5000/api/parents/${record._id}/link-vacancy`, {
+            const updateResponse = await fetch(`https://api.dearsirhometuition.com/api/parents/${record._id}/link-vacancy`, {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'
@@ -259,7 +259,7 @@ const ParentList = () => {
     };
 
     useEffect(() => {
-        const ws = new WebSocket('ws://localhost:5000');
+        const ws = new WebSocket('ws://api.dearsirhometuition.com');
 
         ws.onmessage = (event) => {
             const data = JSON.parse(event.data);
