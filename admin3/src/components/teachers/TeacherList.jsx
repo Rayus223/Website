@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback, useMemo, useRef } from 'react';
+import React, { useState, useEffect, useCallback, useMemo, useRef, useContext } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { 
     Table, Tag, Button, Space, Modal, message, Tooltip, Tabs, Card, 
@@ -76,6 +76,16 @@ const TeacherList = () => {
 
     // Add this state variable after all the other state declarations, around line ~55
     const [followupTeachers, setFollowupTeachers] = useState({});
+
+    // Add these state variables after the other state declarations (around line 40)
+    const [showAllVacancies, setShowAllVacancies] = useState(false);
+    const [initialLoadCount] = useState(10);
+
+    // Add this state variable alongside the other ones
+    const [showAllTeachers, setShowAllTeachers] = useState(false);
+
+    // Add this state variable alongside the other ones
+    const [showAllBudget, setShowAllBudget] = useState(false);
 
     // Add useEffect to load followup data from localStorage on component mount
     useEffect(() => {
@@ -1827,8 +1837,7 @@ const handlePaymentResponse = (hasPaid) => {
                 { text: 'Closed', value: 'closed' }
             ],
             onFilter: (value, record) => record.status === value,
-            filterMultiple: false,
-            defaultFilteredValue: ['open']
+            filterMultiple: false
         },
         {
             title: 'Featured',
@@ -3230,7 +3239,12 @@ const budgetColumns = [
     };
 
     // Update BudgetSection component to remove debug info
-    const BudgetSection = React.memo(() => {
+    const BudgetSection = React.memo(({ 
+        showAllBudget, 
+        setShowAllBudget, 
+        initialLoadCount, 
+        getLimitedData 
+    }) => {
         const handleTabChange = useCallback((newTab) => {
             setBudgetActiveTab(newTab);
         }, []);
@@ -3247,8 +3261,11 @@ const budgetColumns = [
                 : budgetData.filter(entry => entry.type === budgetActiveTab);
             
             // Sort by date (newest first)
-            return data.sort((a, b) => new Date(b.date) - new Date(a.date));
-        }, [budgetData, budgetActiveTab]);
+            const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
+            
+            // Limit data if needed
+            return getLimitedData(sortedData, showAllBudget);
+        }, [budgetData, budgetActiveTab, showAllBudget]);
 
         // Memoize calculations
         const { totalPayments, totalRefunds, totalExpenses, netAmount, pendingAmount } = useMemo(() => {
@@ -3485,6 +3502,17 @@ const budgetColumns = [
                         </Form.Item>
                     </Form>
                 </Modal>
+
+                {!showAllBudget && filteredData.length > initialLoadCount && budgetData.length > initialLoadCount && (
+                    <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 16 }}>
+                        <Button 
+                            type="primary" 
+                            onClick={() => setShowAllBudget(true)}
+                        >
+                            View All ({budgetData.length}) Budget Records
+                        </Button>
+                    </div>
+                )}
             </div>
         );
     });
@@ -3518,7 +3546,7 @@ const budgetColumns = [
                     <Table 
                         ref={tableRef}
                         columns={vacancyColumns} 
-                        dataSource={vacancies}
+                        dataSource={showAllVacancies ? vacancies : vacancies.slice(0, initialLoadCount)}
                         loading={loading}
                         rowKey="_id"
                         className="main-table"
@@ -3534,6 +3562,16 @@ const budgetColumns = [
                             position: ['bottomRight']
                         }}
                     />
+                    {!showAllVacancies && vacancies.length > initialLoadCount && (
+                        <div style={{ textAlign: 'center', marginTop: 16 }}>
+                            <Button 
+                                type="primary" 
+                                onClick={() => setShowAllVacancies(true)}
+                            >
+                                View All ({vacancies.length}) Records
+                            </Button>
+                        </div>
+                    )}
                 </div>
             )
         },
@@ -3570,7 +3608,7 @@ const budgetColumns = [
 
                     <Table 
                         columns={acceptedTeacherColumns} 
-                        dataSource={acceptedTeachersData} // Use memoized data
+                        dataSource={getLimitedData(acceptedTeachersData, showAllTeachers)}
                         loading={loading}
                         rowKey="uniqueKey"
                         className="main-table"
@@ -3584,13 +3622,28 @@ const budgetColumns = [
                             position: ['bottomRight']
                         }}
                     />
+                    {!showAllTeachers && acceptedTeachersData.length > initialLoadCount && (
+                        <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 16 }}>
+                            <Button 
+                                type="primary" 
+                                onClick={() => setShowAllTeachers(true)}
+                            >
+                                View All ({acceptedTeachersData.length}) Records
+                            </Button>
+                        </div>
+                    )}
                 </>
             )
         },
         {
             key: 'budget',
             label: <span><DollarOutlined />Budget</span>,
-            children: <BudgetSection />
+            children: <BudgetSection 
+                showAllBudget={showAllBudget}
+                setShowAllBudget={setShowAllBudget}
+                initialLoadCount={initialLoadCount}
+                getLimitedData={getLimitedData}
+            />
         }
     ];
 
@@ -3804,14 +3857,14 @@ const budgetColumns = [
             const formattedText = `
 Dear Sir Home Tuition - Vacancy
 ---------------------------
-*Title : * ${vacancy.title}
-*Subject : * ${vacancy.subject}
-*Class : * ${vacancy.class}a
-*Time : * ${vacancy.time}
-*Location : * ${vacancy.location}
-*Gender : * ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
-*Salary : * ${vacancy.salary}
-*Description : * ${vacancy.description}
+*Title :* ${vacancy.title}
+*Subject :* ${vacancy.subject}
+*Class :* ${vacancy.class}
+*Time :* ${vacancy.time}
+*Location :* ${vacancy.location}
+*Gender :* ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
+*Salary :* ${vacancy.salary}
+*Description :* ${vacancy.description}
 
 Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
 `;
@@ -3895,14 +3948,14 @@ Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
                 const formattedText = `
 Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
 -------------------------------------------------------------
-*Name : * ${parent.parentName || 'N/A'}
-*Phone : * ${parent.phone || 'N/A'}
-*Address : * ${parent.address || 'N/A'}
-*Grade : * ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
-*Subjects : * ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
-*Preferred Teacher : * ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
-*Preferred Time : * ${parent.preferredTime || 'N/A'}
-*Salary Offered : * ${parent.salary || 'Negotiable'}
+*Name :* ${parent.parentName || 'N/A'}
+*Phone :* ${parent.phone || 'N/A'}
+*Address :* ${parent.address || 'N/A'}
+*Grade :* ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
+*Subjects :* ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
+*Preferred Teacher :* ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
+*Preferred Time :* ${parent.preferredTime || 'N/A'}
+*Salary Offered :* ${parent.salary || 'Negotiable'}
 `;
 
                 // Copy to clipboard
@@ -3928,15 +3981,15 @@ Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
                     const formattedText = `
 Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
 -------------------------------------------------------------
-*Name : * ${parent.parentName || 'N/A'}
-*Phone : * ${parent.phone || 'N/A'}
-*Address : * ${parent.address || 'N/A'}
-*Grade : * ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
-*Subjects : * ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
-*Preferred Teacher : * ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
-*Preferred Time : * ${parent.preferredTime || 'N/A'}
-*Salary Offered : * ${parent.salary || 'Negotiable'}
-*Status : * ${parent.status ? parent.status.toUpperCase() : 'N/A'}
+*Name :* ${parent.parentName || 'N/A'}
+*Phone :* ${parent.phone || 'N/A'}
+*Address :* ${parent.address || 'N/A'}
+*Grade :* ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
+*Subjects :* ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
+*Preferred Teacher :* ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
+*Preferred Time :* ${parent.preferredTime || 'N/A'}
+*Salary Offered :* ${parent.salary || 'Negotiable'}
+*Status :* ${parent.status ? parent.status.toUpperCase() : 'N/A'}
 `;
 
                     // Copy to clipboard
@@ -4233,684 +4286,61 @@ Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
         message.success(`${!followupTeachers[teacherId] ? 'Added to' : 'Removed from'} followup`);
     };
 
-    return (
-        <div className="teacher-list">
-            <Tabs 
-                activeKey={activeTab} 
-                onChange={setActiveTab}
-                items={items}
-            />
+    // Add this after the fetchData function to conditionally limit data
+    const getLimitedData = (data, showAll) => {
+      if (!data || !Array.isArray(data)) return [];
+      return showAll ? data : data.slice(0, initialLoadCount);
+    };
 
-            {/* Modals */}
-            <Modal
-                title={modalState.selectedVacancy ? "Edit Vacancy" : "Add New Vacancy"}
-                open={modalState.addVacancy || modalState.editVacancy}
-                onCancel={() => toggleModal(modalState.selectedVacancy ? 'editVacancy' : 'addVacancy')}
-                footer={null}
+    // Add this just before the return statement
+    const displayedVacancies = getLimitedData(vacancies);
+    const displayedTeachers = getLimitedData(teachers);
+    const displayedAcceptedTeachers = getLimitedData(acceptedTeachersData);
+    const displayedBudgetData = getLimitedData(budgetData);
+
+    // Modify the item assignments in the items array to use the limited data
+    // Inside the items array for 'vacancies' tab children
+    // Replace:
+    // <Table 
+    //    ref={tableRef}
+    //    columns={vacancyColumns} 
+    //    dataSource={vacancies}
+    //    ... rest of the code
+
+    // With:
+    <>
+      <Table 
+        ref={tableRef}
+        columns={vacancyColumns} 
+        dataSource={getLimitedData(vacancies, showAllVacancies)}
+        loading={loading}
+        rowKey="_id"
+        className="main-table"
+        rowClassName={(record, index) => index === highlightedRow ? 'highlighted-row' : ''}
+        onChange={handleTableChange}
+        pagination={{
+            current: currentPage,
+            pageSize: pageSize,
+            pageSizeOptions: ['10', '20', '50', '100'],
+            showSizeChanger: true,
+            showQuickJumper: true,
+            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+            position: ['bottomRight']
+        }}
+    />
+    {!showAllVacancies && vacancies.length > initialLoadCount && (
+        <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 16 }}>
+            <Button 
+                type="primary" 
+                onClick={() => setShowAllVacancies(true)}
             >
-                {renderVacancyForm()}
-            </Modal>
-
-            <Modal
-                title={`Vacancy Applicants ${selectedVacancy?.status === 'closed' ? '(CLOSED)' : '(OPEN)'}`}
-                open={applicantsModalVisible}
-                onCancel={() => {
-                    setApplicantsModalVisible(false);
-                    setSelectedVacancy(null);
-                    setSelectedVacancyApplicants([]);
-                }}
-                footer={null}
-                width={1200}
-                style={{
-                    top: 20
-                }}
-            >
-                {selectedVacancy?.hasAcceptedApplication && (
-                    <div style={{ marginBottom: 16, backgroundColor: '#f6ffed', padding: 10, border: '1px solid #b7eb8f', borderRadius: 4 }}>
-                        <strong>Note:</strong> This vacancy already has an accepted application. Other applications cannot be accepted.
-                    </div>
-                )}
-                
-                {!selectedVacancy?.hasAcceptedApplication && selectedVacancyApplicants.some(app => app.hasRefund) && (
-                    <div style={{ marginBottom: 16, backgroundColor: '#e6f7ff', padding: 10, border: '1px solid #91d5ff', borderRadius: 4 }}>
-                        <strong>Note:</strong> A refund has been processed. You can now accept another application.
-                    </div>
-                )}
-                
-                {selectedVacancy?.status === 'closed' && !selectedVacancy?.hasAcceptedApplication && (
-                    <div style={{ marginBottom: 16, backgroundColor: '#fff7e6', padding: 10, border: '1px solid #ffd591', borderRadius: 4 }}>
-                        <strong>Note:</strong> This vacancy is currently closed. To accept applications, please reopen it.
-                    </div>
-                )}
-                
-                {/* Display vacancy title and location */}
-                <div style={{ marginBottom: 16, backgroundColor: '#f6f6f6', padding: 10, border: '1px solid #d9d9d9', borderRadius: 4 }}>
-                    <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', gap: '30px' }}>
-                            <div>
-                                <strong>Vacancy Title:</strong> {selectedVacancy?.title || 'N/A'}
-                            </div>
-                            <div>
-                                <strong>Location:</strong> {selectedVacancy?.location || 'N/A'}
-                            </div>
-                        </div>
-                        <Button 
-                            type="primary" 
-                            shape="circle" 
-                            icon={<PlusOutlined />} 
-                            onClick={() => {
-                                // Reset the form first
-                                addApplicantForm.resetFields();
-                                // Then show the modal
-                                setAddApplicantModalVisible(true);
-                            }}
-                            title="Add Applicant"
-                        />
-                    </div>
-                </div>
-                
-                <Table
-                    columns={applicantColumns}
-                    dataSource={selectedVacancyApplicants}
-                    rowKey="_id"
-                    pagination={{
-                        pageSize: 10,
-                        showSizeChanger: true,
-                        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
-                    }}
-                />
-            </Modal>
-                
-  
-
-
-<Modal
-    title="CV Preview"
-    open={cvModalVisible}
-    onCancel={() => {
-        setCvModalVisible(false);
-        setSelectedCvUrl(null);
-    }}
-    footer={null}
-    width="90%"
-    style={{ 
-        top: 20,
-        maxWidth: 1200,
-        height: 'calc(100vh - 40px)'
-    }}
-    bodyStyle={{ 
-        height: 'calc(100vh - 140px)',
-        padding: '12px',
-        overflow: 'hidden'
-    }}
-    className="cv-modal"
-    centered
->
-    {selectedCvUrl && (
-        <div style={{ height: '100%', width: '100%', display: 'flex', flexDirection: 'column' }}>
-            <div className="cv-modal-header" style={{ marginBottom: '10px' }}>
-                <Space>
-                    <Button 
-                        type="primary"
-                        icon={<DownloadOutlined />}
-                        onClick={() => handleDownloadCV(selectedCvUrl)}
-                    >
-                        Download
-                    </Button>
-                    <Button 
-                        onClick={() => {
-                            setCvModalVisible(false);
-                            setSelectedCvUrl(null);
-                        }}
-                    >
-                        Close
-                    </Button>
-                </Space>
-            </div>
-            {selectedCvUrl && selectedCvUrl.includes('google.com/gview') ? (
-                <iframe
-                    src={selectedCvUrl}
-                    style={{ 
-                        width: '100%', 
-                        height: 'calc(100% - 50px)', 
-                        border: 'none',
-                        flex: 1
-                    }}
-                    title="CV Preview"
-                    frameBorder="0"
-                    allowFullScreen
-                />
-            ) : getFileType(selectedCvUrl) === 'image' ? (
-                <div style={{
-                    display: 'flex',
-                    justifyContent: 'center',
-                    alignItems: 'center',
-                    flex: 1,
-                    overflow: 'auto'
-                }}>
-                    <img 
-                        src={selectedCvUrl}
-                        alt="CV Preview" 
-                        style={{
-                            maxWidth: '100%',
-                            maxHeight: 'calc(100vh - 200px)',
-                            objectFit: 'contain'
-                        }}
-                    />
-                </div>
-            ) : (
-                <object
-                    data={selectedCvUrl}
-                    type="application/pdf"
-                    width="100%"
-                    height="100%"
-                    style={{
-                        flex: 1,
-                        minHeight: 'calc(100vh - 200px)'
-                    }}
-                >
-                    <p>
-                        Your browser does not support PDF viewing. 
-                        <a href={selectedCvUrl} target="_blank" rel="noreferrer">Click here to download the PDF</a>.
-                    </p>
-                </object>
-            )}
+                View All ({vacancies.length}) Records
+            </Button>
         </div>
     )}
-</Modal>
+    </>
 
-            {/* Teacher Details Modal */}
-            <Modal
-                title="Teacher Details"
-                open={viewModalVisible}
-                onCancel={() => setViewModalVisible(false)}
-                footer={null}
-                width={800} // Keep width or adjust if needed
-            >
-                {selectedTeacher && (
-                    <div className="teacher-details">
-                        <h2>{selectedTeacher.fullName}</h2>
-                        <Row gutter={[16, 16]}>
-                            {/* Column 1: Basic Info */}
-                            <Col span={12}>
-                                <div className="detail-row"><strong>Email:</strong> {selectedTeacher.email}</div>
-                                <div className="detail-row"><strong>Phone:</strong> {selectedTeacher.phone}</div>
-                                <div className="detail-row"><strong>Subjects:</strong> {selectedTeacher.subjects?.map(subject => <Tag key={subject} color="blue">{subject}</Tag>) || 'N/A'}</div>
-                                <div className="detail-row"><strong>CV:</strong> 
-                                    {selectedTeacher.cv ? (
-                                        <Button icon={<FilePdfOutlined />} onClick={() => handleViewCV(selectedTeacher.cv)}>View CV</Button>
-                                    ) : (
-                                        'Not Available'
-                                    )}
-                        </div>
-                            </Col>
-                            {/* Column 2: Applied Vacancies with Payment Status */}
-                            <Col span={12}>
-                        <div className="detail-row">
-                                    <strong>Applied Vacancies & Status:</strong>
-                                    <ul style={{ paddingLeft: '20px', marginTop: '5px', listStyle: 'none' }}>
-                                        {(() => {
-                                            const appliedToList = vacancies
-                                                .filter(vac => vac.applications?.some(app => app.teacher?._id === selectedTeacher._id))
-                                                .map(vac => {
-                                                    const application = vac.applications.find(app => app.teacher?._id === selectedTeacher._id);
-                                                    if (!application) return null; // Skip if no application found
-
-                                                    // Find the relevant payment status from budgetData
-                                                    const relevantBudgetEntries = budgetData
-                                                        .filter(entry => entry.teacherId === selectedTeacher._id && entry.vacancyId === vac._id)
-                                                        .sort((a, b) => new Date(b.date) - new Date(a.date)); // Sort by date descending
-                                                    
-                                                    const latestBudgetEntry = relevantBudgetEntries[0]; // Get the latest entry
-                                                    
-                                                    let paymentStatusTag = null;
-                                                    if (relevantBudgetEntries.length > 0) {
-                                                        // Count payments and refunds
-                                                        const payments = relevantBudgetEntries.filter(entry => entry.type === 'payment');
-                                                        const refunds = relevantBudgetEntries.filter(entry => entry.type === 'refund');
-                                                        
-                                                        // Handle multiple payment statuses
-                                                        if (refunds.length > 0 && payments.length > 0) {
-                                                            paymentStatusTag = (
-                                                                <span>
-                                                                    <Tag color="green">Paid{payments.length > 1 ? ` (${payments.length})` : ''}</Tag>
-                                                                    <Tag color="red">Refunded{refunds.length > 1 ? ` (${refunds.length})` : ''}</Tag>
-                                                                </span>
-                                                            );
-                                                        } else if (refunds.length > 0) {
-                                                            paymentStatusTag = <Tag color="red">Refunded{refunds.length > 1 ? ` (${refunds.length})` : ''}</Tag>;
-                                                        } else if (payments.length > 0) {
-                                                            // Check if any are partial
-                                                            const hasPartial = payments.some(p => p.status === 'partial');
-                                                            if (hasPartial) {
-                                                                paymentStatusTag = <Tag color="orange">Partial</Tag>;
-                                                            } else {
-                                                                paymentStatusTag = <Tag color="green">Paid{payments.length > 1 ? ` (${payments.length})` : ''}</Tag>;
-                                                            }
-                                                        }
-                                                    } else if (application.status === 'accepted') {
-                                                        // If accepted but no payment record found
-                                                        paymentStatusTag = <Tag color="blue">Payment Pending</Tag>;
-                                                    }
-
-                                                    return (
-                                                        <li key={vac._id} style={{ marginBottom: '8px' }}>
-                                                            {vac.title || 'Untitled Vacancy'} <br />
-                                                            <Tag color={getStatusColor(application.status || 'pending')} style={{ marginRight: '5px' }}>
-                                                                {(application.status || 'pending').toUpperCase()}
-                            </Tag>
-                                                            {/* Only show payment status if relevant (e.g., not for pending/rejected apps) */}
-                                                            {(application.status === 'accepted' || latestBudgetEntry?.status === 'refunded') && paymentStatusTag}
-                                                        </li>
-                                                    );
-                                                })
-                                                .filter(Boolean);
-                                            
-                                            if (appliedToList.length === 0) {
-                                                return <li>No applications found</li>;
-                                            }
-                                            return appliedToList;
-                                        })()}
-                                    </ul>
-                        </div>
-                            </Col>
-                        </Row>
-                    </div>
-                )}
-            </Modal>
-
-            {/* Add Payment Confirmation Modal */}
-            <Modal
-                title="Payment Confirmation"
-                open={paymentConfirmationVisible}
-                onCancel={() => {
-                    setPaymentConfirmationVisible(false);
-                    setPendingAcceptData(null);
-                }}
-                footer={null}
-            >
-                <div style={{ textAlign: 'center', padding: '20px 0' }}>
-                    <h3>Has the teacher paid the full amount?</h3>
-                    <Space size="large" style={{ marginTop: 20 }}>
-                        <Button type="primary" onClick={() => handlePaymentResponse(true)}>
-                            Yes
-                            </Button>
-                        <Button onClick={() => handlePaymentResponse(false)}>
-                            No
-                        </Button>
-                    </Space>
-                        </div>
-            </Modal>
-
-            {/* Payment Amount Modal */}
-            <Modal
-                title="Enter Payment Amount"
-                open={paymentAmountVisible}
-                onCancel={() => {
-                    setPaymentAmountVisible(false);
-                    setPaymentAmount('');
-                    setPendingAcceptData(null);
-                }}
-                footer={[
-                    <Button key="cancel" onClick={() => {
-                        setPaymentAmountVisible(false);
-                        setPaymentAmount('');
-                        setPendingAcceptData(null);
-                    }}>
-                        Cancel
-                    </Button>,
-                    <Button key="submit" type="primary" onClick={handlePaymentAmountSubmit}>
-                        Submit
-                    </Button>
-                ]}
-            >
-                <div style={{ padding: '20px 0' }}>
-                    <Form layout="vertical">
-                        <Form.Item
-                            label="Payment Amount (Rs.)"
-                            required
-                            validateStatus={paymentAmount && !isNaN(paymentAmount) ? 'success' : 'error'}
-                            help={paymentAmount && !isNaN(paymentAmount) ? '' : 'Please enter a valid amount'}
-                        >
-                            <Input
-                                prefix="Rs."
-                                type="number"
-                                value={paymentAmount}
-                                onChange={(e) => setPaymentAmount(e.target.value)}
-                                placeholder="Enter amount"
-                            />
-                        </Form.Item>
-                    </Form>
-                    </div>
-            </Modal>
-
-            {/* Add Refund Form Modal */}
-            <Modal
-                title="Process Refund"
-                open={refundFormVisible}
-                onCancel={() => {
-                    setRefundFormVisible(false);
-                    refundForm.resetFields();
-                    setSelectedRefundTeacher(null);
-                }}
-                footer={null}
-            >
-                <Form
-                    form={refundForm}
-                    onFinish={handleRefundSubmit}
-                    layout="vertical"
-                >
-                    <div style={{ marginBottom: 16 }}>
-                        <p><strong>Teacher:</strong> {selectedRefundTeacher?.teacher.fullName}</p>
-                        <p><strong>Vacancy:</strong> {selectedRefundTeacher?.vacancy.title}</p>
-                        {selectedRefundTeacher?.originalPayment?.isAdminOverride ? (
-                            <div style={{ 
-                                backgroundColor: '#fffbe6', 
-                                padding: '10px', 
-                                border: '1px solid #faad14',
-                                borderRadius: '4px',
-                                marginBottom: '10px'
-                            }}>
-                                <p style={{ color: '#d4b106', margin: 0 }}>
-                                    <strong>Warning:</strong> No original payment record was found. This refund is being processed as an administrative override.
-                                </p>
-                            </div>
-                        ) : (
-                            <p><strong>Original Payment:</strong> Rs. {selectedRefundTeacher?.originalPayment?.amount.toLocaleString()}</p>
-                        )}
-                    </div>
-
-                    <Form.Item
-                        name="refundAmount"
-                        label="Refund Amount"
-                        rules={[
-                            { required: true, message: 'Please enter refund amount' },
-                            ({ getFieldValue }) => ({
-                                validator(_, value) {
-                                    if (!value || value <= 0) {
-                                        return Promise.reject('Amount must be greater than 0');
-                                    }
-                                    if (selectedRefundTeacher?.originalPayment && 
-                                        !selectedRefundTeacher.originalPayment.isAdminOverride && 
-                                        value > selectedRefundTeacher.originalPayment.amount) {
-                                        return Promise.reject('Refund cannot exceed original payment');
-                                    }
-                                    return Promise.resolve();
-                                },
-                            }),
-                        ]}
-                    >
-                        <Input
-                            prefix="Rs."
-                            type="number"
-                            placeholder="Enter refund amount"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="reason"
-                        label="Reason for Refund"
-                        initialValue="Administrative refund"
-                        rules={[{ required: true, message: 'Please enter reason for refund' }]}
-                    >
-                        <Input.TextArea 
-                            rows={4}
-                            placeholder="Enter reason for refund"
-                        />
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Space>
-                            <Button type="primary" htmlType="submit">
-                                {selectedRefundTeacher?.originalPayment?.isAdminOverride ? 'Process Admin Override Refund' : 'Process Refund'}
-                            </Button>
-                            <Button onClick={() => {
-                                setRefundFormVisible(false);
-                                refundForm.resetFields();
-                                setSelectedRefundTeacher(null);
-                            }}>
-                                Cancel
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
-
-            {/* Add Partial Payment Modal */}
-            <Modal
-                title="Enter Partial Payment Details"
-                open={partialPaymentVisible}
-                onCancel={() => {
-                    setPartialPaymentVisible(false);
-                    partialPaymentForm.resetFields();
-                    setPendingAcceptData(null);
-                }}
-                footer={null}
-            >
-                <Form
-                    form={partialPaymentForm}
-                    onFinish={handlePartialPaymentSubmit}
-                    layout="vertical"
-                >
-                    <Form.Item
-                        name="amountPaid"
-                        label="Amount Paid (Rs.)"
-                       
-                    >
-                        <Input
-                            prefix="Rs."
-                            type="number"
-                            placeholder="Enter amount paid"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="amountLeft"
-                        label="Amount Left (Rs.)"
-                       
-                    >
-                        <Input
-                            prefix="Rs."
-                            type="number"
-                            placeholder="Enter remaining amount"
-                        />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="dueDate"
-                        label="Due Date"
-                        rules={[
-                            { required: true, message: 'Please select the due date' },
-                            {
-                                validator: async (_, value) => {
-                                    if (value && new Date(value) <= new Date()) {
-                                        throw new Error('Due date must be in the future');
-                                    }
-                                }
-                            }
-                        ]}
-                    >
-                        <Input
-                            type="date"
-                            min={new Date().toISOString().split('T')[0]}
-                        />
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Space>
-                            <Button type="primary" htmlType="submit">
-                                Submit
-                            </Button>
-                            <Button onClick={() => {
-                                setPartialPaymentVisible(false);
-                                partialPaymentForm.resetFields();
-                                setPendingAcceptData(null);
-                            }}>
-                                Cancel
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
-
-            {/* Add Parent Details Modal */}
-            <Modal
-                title={`Parent Details for Vacancy: ${selectedParent?.vacancyTitle || ''}`}
-                open={parentDetailsVisible}
-                onCancel={() => {
-                    setParentDetailsVisible(false);
-                    setSelectedParent(null);
-                }}
-                footer={[
-                    <Button 
-                        key="copy" 
-                        type="primary" 
-                        icon={<CopyOutlined />}
-                        onClick={() => {
-                            // Format the parent details for clipboard again
-                            if (!selectedParent) return;
-                            
-                            const formattedText = `
-Dear Sir Home Tuition - Parent Details (Vacancy: ${selectedParent.vacancyTitle || ''})
--------------------------------------------------------------
-Name: ${selectedParent.parentName || 'N/A'}
-Phone: ${selectedParent.phone || 'N/A'}
-Address: ${selectedParent.address || 'N/A'}
-Grade: ${selectedParent.grade ? `Grade ${selectedParent.grade}` : 'N/A'}
-Subjects: ${selectedParent.subjects ? (Array.isArray(selectedParent.subjects) ? selectedParent.subjects.join(', ') : selectedParent.subjects) : 'N/A'}
-Preferred Teacher: ${selectedParent.preferredTeacher ? selectedParent.preferredTeacher.charAt(0).toUpperCase() + selectedParent.preferredTeacher.slice(1) : 'N/A'}
-Preferred Time: ${selectedParent.preferredTime || 'N/A'}
-Salary Offered: ${selectedParent.salary || 'Negotiable'}
-Status: ${selectedParent.status ? selectedParent.status.toUpperCase() : 'N/A'}
-`;
-                            
-                            navigator.clipboard.writeText(formattedText)
-                                .then(() => message.success('Parent details copied to clipboard!'))
-                                .catch(() => message.error('Failed to copy parent details.'));
-                        }}
-                    >
-                        Copy Details
-                    </Button>,
-                    <Button key="close" onClick={() => {
-                        setParentDetailsVisible(false);
-                        setSelectedParent(null);
-                    }}>
-                        Close
-                    </Button>
-                ]}
-            >
-                {selectedParent && (
-                    <div>
-                        <p><strong>Name:</strong> {selectedParent.parentName}</p>
-                        <p><strong>Phone:</strong> {
-                            selectedParent.phone ? (
-                                <a href={`tel:${selectedParent.phone}`}>{selectedParent.phone}</a>
-                            ) : 'N/A'
-                        }</p>
-                        <p><strong>Address:</strong> {selectedParent.address || 'N/A'}</p>
-                        <p><strong>Grade:</strong> {
-                            selectedParent.grade ? `Grade ${selectedParent.grade}` : 'N/A'
-                        }</p>
-                        <p><strong>Subjects:</strong> {
-                            selectedParent.subjects && Array.isArray(selectedParent.subjects) 
-                                ? selectedParent.subjects.map((subject, index) => (
-                                    <span key={index}>
-                                        {subject.charAt(0).toUpperCase() + subject.slice(1).replace(/_/g, ' ')}
-                                        {index < selectedParent.subjects.length - 1 ? ', ' : ''}
-                                    </span>
-                                ))
-                                : (selectedParent.subjects || 'N/A')
-                        }</p>
-                        <p><strong>Preferred Teacher:</strong> {
-                            selectedParent.preferredTeacher 
-                                ? selectedParent.preferredTeacher.charAt(0).toUpperCase() + selectedParent.preferredTeacher.slice(1)
-                                : 'N/A'
-                        }</p>
-                        <p><strong>Preferred Time:</strong> {
-                            selectedParent.preferredTime ? (
-                                {
-                                    'morning': 'Morning (6 AM - 10 AM)',
-                                    'afternoon': 'Afternoon (2 PM - 5 PM)',
-                                    'evening': 'Evening (5 PM - 8 PM)'
-                                }[selectedParent.preferredTime] || selectedParent.preferredTime
-                            ) : 'N/A'
-                        }</p>
-                        <p><strong>Salary Offered:</strong> {selectedParent.salary || 'Negotiable'}</p>
-                        <p><strong>Status:</strong> {
-                            selectedParent.status ? (
-                                <Tag color={
-                                    selectedParent.status === 'new' ? 'default' :
-                                    selectedParent.status === 'pending' ? 'processing' :
-                                    selectedParent.status === 'done' ? 'success' : 'error'
-                                }>
-                                    {selectedParent.status === 'new' ? 'New Application' :
-                                     selectedParent.status === 'pending' ? 'Vacancy Created' :
-                                     selectedParent.status === 'done' ? 'Teacher Assigned' : 
-                                     selectedParent.status === 'not_done' ? 'Failed' : 
-                                     selectedParent.status.toUpperCase()}
-                                </Tag>
-                            ) : 'N/A'
-                        }</p>
-                        {selectedParent.submissionDate && (
-                            <p><strong>Submission Date:</strong> {new Date(selectedParent.submissionDate).toLocaleString()}</p>
-                        )}
-                    </div>
-                )}
-            </Modal>
-
-            {/* Add Applicant Modal */}
-            <Modal
-                title="Add New Applicant"
-                open={addApplicantModalVisible}
-                onCancel={() => {
-                    setAddApplicantModalVisible(false);
-                    addApplicantForm.resetFields();
-                }}
-                footer={null}
-            >
-                <Form
-                    form={addApplicantForm}
-                    layout="vertical"
-                    onFinish={handleAddApplicant}
-                >
-                    <Form.Item
-                        name="fullName"
-                        label="Name"
-                        rules={[{ required: true, message: 'Please enter applicant name' }]}
-                    >
-                        <Input placeholder="Enter applicant name" />
-                    </Form.Item>
-
-                    <Form.Item
-                        name="phone"
-                        label="Phone Number"
-                        rules={[{ required: true, message: 'Please enter phone number' }]}
-                    >
-                        <Input 
-                            placeholder="Enter phone number" 
-                            addonBefore={<WhatsAppOutlined style={{ color: '#25D366' }} />}
-                        />
-                    </Form.Item>
-
-                    <Form.Item>
-                        <Space>
-                            <Button type="primary" htmlType="submit">
-                                Add Applicant
-                            </Button>
-                            <Button onClick={() => {
-                                setAddApplicantModalVisible(false);
-                                addApplicantForm.resetFields();
-                            }}>
-                                Cancel
-                            </Button>
-                        </Space>
-                    </Form.Item>
-                </Form>
-            </Modal>
-        </div>
-    );
+    // ... rest of the code
 };
-
-
 
 export default TeacherList;

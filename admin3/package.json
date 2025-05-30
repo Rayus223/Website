@@ -8,8 +8,10 @@
     "axios": "^x.x.x",
     "react": "^18.x.x",
     "react-dom": "^18.x.x",
+    "react-query": "^3.39.3",
     "react-router-dom": "^6.x.x",
     "react-scripts": "5.0.1",
+    "react-window": "^1.8.11",
     "reconnecting-websocket": "^4.4.0"
   },
   "scripts": {
