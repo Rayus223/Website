@@ -3079,11 +3079,13 @@ const budgetColumns = [
         try {
             setLoading(true);
             
-            if (!selectedRefundTeacher?.originalPayment) {
+            let refundData = selectedRefundTeacher; // Create a local copy first
+            
+            if (!refundData?.originalPayment) {
                 console.log('Original payment record not found, proceeding as admin override');
                 // Create a dummy payment record
-                selectedRefundTeacher = {
-                    ...selectedRefundTeacher,
+                refundData = {
+                    ...refundData,
                     originalPayment: {
                         _id: 'admin-override',
                         amount: 0,
@@ -3093,16 +3095,16 @@ const budgetColumns = [
             }
 
             // Log payment record for debugging
-            console.log('Using original payment record:', selectedRefundTeacher.originalPayment);
+            console.log('Using original payment record:', refundData.originalPayment);
 
             // For admin override cases, skip the existing refund check
-            if (!selectedRefundTeacher.originalPayment.isAdminOverride) {
+            if (!refundData.originalPayment.isAdminOverride) {
                 // Check if refund already exists for this payment
                 const existingRefund = budgetData.find(
                     entry => 
                         entry.type === 'refund' && 
-                        entry.teacherId === selectedRefundTeacher.teacher._id &&
-                        entry.vacancyId === selectedRefundTeacher.vacancy._id
+                        entry.teacherId === refundData.teacher._id &&
+                        entry.vacancyId === refundData.vacancy._id
                 );
 
                 if (existingRefund) {
@@ -3118,8 +3120,8 @@ const budgetColumns = [
                 if (!vacancy.applications) continue;
                 
                 const application = vacancy.applications.find(app => 
-                    app.teacher && app.teacher._id === selectedRefundTeacher.teacher._id &&
-                    vacancy._id === selectedRefundTeacher.vacancy._id
+                    app.teacher && app.teacher._id === refundData.teacher._id &&
+                    vacancy._id === refundData.vacancy._id
                 );
                 
                 if (application) {
@@ -3131,7 +3133,7 @@ const budgetColumns = [
 
             if (!foundVacancy || !foundApplication) {
                 console.warn('Could not find exact application match, using selected teacher data');
-                foundApplication = selectedRefundTeacher.application;
+                foundApplication = refundData.application;
             }
 
             // Check if application is already refunded
@@ -3140,38 +3142,38 @@ const budgetColumns = [
             }
 
             // Get teacher name - ensure we have it from somewhere
-            const teacherName = selectedRefundTeacher.teacher.fullName || 
-                                selectedRefundTeacher.teacher.name || 
+            const teacherName = refundData.teacher.fullName || 
+                                refundData.teacher.name || 
                                 'Unknown Teacher';
                                 
             // Get vacancy title - ensure we have it from somewhere
-            const vacancyTitle = selectedRefundTeacher.vacancy.title || 
+            const vacancyTitle = refundData.vacancy.title || 
                                  'Unknown Vacancy';
 
             // Create refund entry with all required fields
             const refundEntry = {
-                teacherId: selectedRefundTeacher.teacher._id,
+                teacherId: refundData.teacher._id,
                 teacherName: teacherName,
-                vacancyId: selectedRefundTeacher.vacancy._id,
+                vacancyId: refundData.vacancy._id,
                 vacancyTitle: vacancyTitle,
                 amount: parseFloat(values.refundAmount),
                 date: new Date().toISOString(),
                 reason: values.reason || 'Administrative refund', // Ensure reason is never empty
-                isAdminOverride: selectedRefundTeacher.originalPayment.isAdminOverride || false
+                isAdminOverride: refundData.originalPayment.isAdminOverride || false
             };
             
             // Add applicationId only if it exists and is not a synthetic ID
             if (foundApplication && foundApplication._id && !String(foundApplication._id).startsWith('synthetic-')) {
                 refundEntry.applicationId = foundApplication._id;
-            } else if (selectedRefundTeacher.originalPayment.applicationId) {
+            } else if (refundData.originalPayment.applicationId) {
                 // If the original payment has an applicationId, use that
-                refundEntry.applicationId = selectedRefundTeacher.originalPayment.applicationId;
+                refundEntry.applicationId = refundData.originalPayment.applicationId;
             }
             
             // Only add originalPaymentId if it's not an admin override
-            if (!selectedRefundTeacher.originalPayment.isAdminOverride) {
-                refundEntry.originalPaymentId = selectedRefundTeacher.originalPayment._id || 
-                                                selectedRefundTeacher.originalPayment.id;
+            if (!refundData.originalPayment.isAdminOverride) {
+                refundEntry.originalPaymentId = refundData.originalPayment._id || 
+                                                refundData.originalPayment.id;
             }
 
             console.log('Final refund entry being sent to API:', JSON.stringify(refundEntry, null, 2));
@@ -3189,12 +3191,12 @@ const budgetColumns = [
                 // Update local state to reflect the refund
                 setVacancies(prev => 
                     prev.map(v => 
-                        v._id === selectedRefundTeacher.vacancy._id 
+                        v._id === refundData.vacancy._id 
                             ? {
                                 ...v,
                                 applications: v.applications.map(app =>
                                     (app._id === foundApplication._id) || 
-                                    (app.teacher?._id === selectedRefundTeacher.teacher._id)
+                                    (app.teacher?._id === refundData.teacher._id)
                                         ? { ...app, status: 'rejected' } // Use 'rejected' for backend compatibility
                                         : app
                                 ),
