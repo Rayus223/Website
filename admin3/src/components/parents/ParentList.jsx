@@ -14,7 +14,7 @@ const ParentList = () => {
     const [showTrash, setShowTrash] = useState(false);
 
     const [currentPage, setCurrentPage] = useState(1);
-    const [pageSize, setPageSize] = useState(1000);
+    const [pageSize, setPageSize] = useState(10);
     const navigate = useNavigate();
 
     // Add table change handler
