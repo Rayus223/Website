@@ -87,6 +87,12 @@ const TeacherList = () => {
     // Add this state variable alongside the other ones
     const [showAllBudget, setShowAllBudget] = useState(false);
 
+    // Helper function to conditionally limit data display
+    const getLimitedData = (data, showAll) => {
+      if (!data || !Array.isArray(data)) return [];
+      return showAll ? data : data.slice(0, initialLoadCount);
+    };
+
     // Add useEffect to load followup data from localStorage on component mount
     useEffect(() => {
         try {
@@ -1304,7 +1310,7 @@ const handlePaymentSubmission = async (teacherId, vacancyId, applicationId, paym
 };
 
 // Update handlePaymentAmountSubmit
-const handlePaymentAmountSubmit = async () => {
+const handlePaymentAmountSubmit = useCallback(async () => {
     try {
         // Validate payment amount
         if (!paymentAmount || isNaN(paymentAmount) || parseFloat(paymentAmount) <= 0) {
@@ -1389,7 +1395,7 @@ const handlePaymentAmountSubmit = async () => {
         console.error('Error processing payment:', error);
         message.error(error.message || 'Failed to process payment');
     }
-};
+}, [paymentAmount, pendingAcceptData, vacancies, setBudgetData, setVacancies, setPaymentAmount, setPaymentAmountVisible, setPendingAcceptData]);
 
 // Utility function to ensure we have complete teacher data
 
@@ -2539,8 +2545,8 @@ const budgetColumns = [
     }
 ];
 
-    // Define columns for accepted teachers
-    const acceptedTeacherColumns = [
+    // Define columns for accepted teachers with useCallback
+    const acceptedTeacherColumns = useMemo(() => [
         {
             title: 'Teacher Name',
             dataIndex: 'fullName',
@@ -2643,9 +2649,7 @@ const budgetColumns = [
                 </Space>
             )
         }
-    ];
-
-    
+    ], [handleViewTeacher, handleViewCV, handleTeacherActiveStatus, handleRefundClick]);
 
     // Function to get accepted teachers - Use useMemo for optimization
     const acceptedTeachersData = useMemo(() => {
@@ -3241,286 +3245,289 @@ const budgetColumns = [
     };
 
     // Update BudgetSection component to remove debug info
-    const BudgetSection = React.memo(({ 
-        showAllBudget, 
-        setShowAllBudget, 
-        initialLoadCount, 
-        getLimitedData,
-        budgetData,
-        budgetActiveTab,
-        setBudgetActiveTab
-    }) => {
-        const handleTabChange = useCallback((newTab) => {
-            setBudgetActiveTab(newTab);
-        }, [setBudgetActiveTab]);
+    const BudgetSection = useMemo(() => {
+        // Return the memo component function
+        return ({ 
+            showAllBudget, 
+            setShowAllBudget, 
+            initialLoadCount, 
+            getLimitedData,
+            budgetData,
+            budgetActiveTab,
+            setBudgetActiveTab
+        }) => {
+            const handleTabChange = useCallback((newTab) => {
+                setBudgetActiveTab(newTab);
+            }, [setBudgetActiveTab]);
 
-        // Add state for expenses modal
-        const [expenseModalVisible, setExpenseModalVisible] = useState(false);
-        const [expenseForm] = Form.useForm();
+            // Add state for expenses modal
+            const [expenseModalVisible, setExpenseModalVisible] = useState(false);
+            const [expenseForm] = Form.useForm();
 
-        // Memoize filtered data
-        const filteredData = useMemo(() => {
-            // Apply transaction type filter
-            const data = budgetActiveTab === 'all' 
-                ? budgetData 
-                : budgetData.filter(entry => entry.type === budgetActiveTab);
-            
-            // Sort by date (newest first)
-            const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
-            
-            // Limit data if needed
-            return getLimitedData(sortedData, showAllBudget);
-        }, [budgetData, budgetActiveTab, showAllBudget, getLimitedData]);
-
-        // Memoize calculations
-        const { totalPayments, totalRefunds, totalExpenses, netAmount, pendingAmount } = useMemo(() => {
-            const payments = budgetData
-                .filter(entry => entry.type === 'payment')
-                .reduce((sum, entry) => sum + entry.amount, 0);
+            // Memoize filtered data
+            const filteredData = useMemo(() => {
+                // Apply transaction type filter
+                const data = budgetActiveTab === 'all' 
+                    ? budgetData 
+                    : budgetData.filter(entry => entry.type === budgetActiveTab);
                 
-            const refunds = budgetData
-                .filter(entry => entry.type === 'refund')
-                .reduce((sum, entry) => sum + entry.amount, 0);
+                // Sort by date (newest first)
+                const sortedData = data.sort((a, b) => new Date(b.date) - new Date(a.date));
                 
-            const pending = budgetData
-                .filter(entry => entry.type === 'payment' && entry.status === 'partial')
-                .reduce((sum, entry) => sum + (entry.remainingAmount || 0), 0);
+                // Limit data if needed
+                return getLimitedData(sortedData, showAllBudget);
+            }, [budgetData, budgetActiveTab, showAllBudget, getLimitedData]);
 
-            const expenses = budgetData
-                .filter(entry => entry.type === 'expense')
-                .reduce((sum, entry) => sum + entry.amount, 0);
+            // Memoize calculations
+            const { totalPayments, totalRefunds, totalExpenses, netAmount, pendingAmount } = useMemo(() => {
+                const payments = budgetData
+                    .filter(entry => entry.type === 'payment')
+                    .reduce((sum, entry) => sum + entry.amount, 0);
+                    
+                const refunds = budgetData
+                    .filter(entry => entry.type === 'refund')
+                    .reduce((sum, entry) => sum + entry.amount, 0);
+                    
+                const pending = budgetData
+                    .filter(entry => entry.type === 'payment' && entry.status === 'partial')
+                    .reduce((sum, entry) => sum + (entry.remainingAmount || 0), 0);
 
-            return {
-                totalPayments: payments,
-                totalRefunds: refunds,
-                totalExpenses: expenses,
-                netAmount: payments - refunds - expenses,
-                pendingAmount: pending
-            };
-        }, [budgetData]);
+                const expenses = budgetData
+                    .filter(entry => entry.type === 'expense')
+                    .reduce((sum, entry) => sum + entry.amount, 0);
 
-        // Handle adding an expense
-        const handleAddExpense = async (values) => {
-            try {
-                setLoading(true);
-                
-                // Prepare expense data
-                const expenseData = {
-                    description: values.description,
-                    amount: parseFloat(values.amount),
-                    date: values.date ? new Date(values.date).toISOString() : new Date().toISOString(),
-                    type: 'expense'
+                return {
+                    totalPayments: payments,
+                    totalRefunds: refunds,
+                    totalExpenses: expenses,
+                    netAmount: payments - refunds - expenses,
+                    pendingAmount: pending
                 };
-                
-                // Call API to add expense
-                const response = await apiService.createBudgetTransaction({
-                    ...expenseData,
-                    // These fields are required by the API but won't be used for expenses
-                    teacherId: "expense",
-                    teacherName: "Expense",
-                    vacancyId: "expense",
-                    vacancyTitle: values.description,
-                    status: 'paid'
-                });
-                
-                if (response.success) {
-                    // Close modal and reset form
-                    setExpenseModalVisible(false);
-                    expenseForm.resetFields();
+            }, [budgetData]);
+
+            // Handle adding an expense
+            const handleAddExpense = async (values) => {
+                try {
+                    setLoading(true);
                     
-                    // Refresh budget data
-                    await fetchBudgetData();
-                    message.success('Expense added successfully');
-                } else {
-                    throw new Error(response.message || 'Failed to add expense');
+                    // Prepare expense data
+                    const expenseData = {
+                        description: values.description,
+                        amount: parseFloat(values.amount),
+                        date: values.date ? new Date(values.date).toISOString() : new Date().toISOString(),
+                        type: 'expense'
+                    };
+                    
+                    // Call API to add expense
+                    const response = await apiService.createBudgetTransaction({
+                        ...expenseData,
+                        // These fields are required by the API but won't be used for expenses
+                        teacherId: "expense",
+                        teacherName: "Expense",
+                        vacancyId: "expense",
+                        vacancyTitle: values.description,
+                        status: 'paid'
+                    });
+                    
+                    if (response.success) {
+                        // Close modal and reset form
+                        setExpenseModalVisible(false);
+                        expenseForm.resetFields();
+                        
+                        // Refresh budget data
+                        await fetchBudgetData();
+                        message.success('Expense added successfully');
+                    } else {
+                        throw new Error(response.message || 'Failed to add expense');
+                    }
+                } catch (error) {
+                    console.error('Error adding expense:', error);
+                    message.error(error.message || 'Failed to add expense');
+                } finally {
+                    setLoading(false);
                 }
-            } catch (error) {
-                console.error('Error adding expense:', error);
-                message.error(error.message || 'Failed to add expense');
-            } finally {
-                setLoading(false);
-            }
-        };
+            };
 
-        // Check if we have any data
-        if (budgetData.length === 0) {
-            return (
-                <div>
-                    <h3>No budget data available</h3>
-                    <Button 
-                        type="primary" 
-                        onClick={fetchBudgetData}
-                    >
-                        Refresh Budget Data
-                    </Button>
-                </div>
-            );
-        }
-
-        return (
-            <div>
-                <Row gutter={16} style={{ marginBottom: 16 }}>
-                    <Col span={4}>
-                        <Card>
-                            <Statistic 
-                                title="Total Collections" 
-                                value={`Rs. ${totalPayments.toLocaleString()}`}
-                                valueStyle={{ color: '#52c41a' }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={4}>
-                        <Card>
-                            <Statistic 
-                                title="Total Refunds" 
-                                value={`Rs. ${totalRefunds.toLocaleString()}`}
-                                valueStyle={{ color: '#ff4d4f' }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={4}>
-                        <Card>
-                            <Statistic 
-                                title="Total Expenses" 
-                                value={`Rs. ${totalExpenses.toLocaleString()}`}
-                                valueStyle={{ color: '#ff7a45' }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={4}>
-                        <Card>
-                            <Statistic 
-                                title="Pending Collections" 
-                                value={`Rs. ${pendingAmount.toLocaleString()}`}
-                                valueStyle={{ color: '#faad14' }}
-                            />
-                        </Card>
-                    </Col>
-                    <Col span={8}>
-                        <Card>
-                            <Statistic 
-                                title="Net Amount" 
-                                value={`Rs. ${netAmount.toLocaleString()}`}
-                                valueStyle={{ color: netAmount >= 0 ? '#52c41a' : '#ff4d4f' }}
-                            />
-                        </Card>
-                    </Col>
-                </Row>
-
-                <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
-                    <Tabs 
-                        activeKey={budgetActiveTab} 
-                        onChange={handleTabChange}
-                        style={{ marginBottom: 16 }}
-                    >
-                        <TabPane tab="All Transactions" key="all"></TabPane>
-                        <TabPane tab="Payments" key="payment"></TabPane>
-                        <TabPane tab="Refunds" key="refund"></TabPane>
-                        <TabPane tab="Expenses" key="expense"></TabPane>
-                    </Tabs>
-                    
-                    <Button 
-                        type="primary" 
-                        icon={<PlusOutlined />} 
-                        onClick={() => {
-                            expenseForm.resetFields();
-                            setExpenseModalVisible(true);
-                        }}
-                    >
-                        Add Expense
-                    </Button>
-                </div>
-
-                <Table 
-                    columns={budgetColumns}
-                    dataSource={filteredData}
-                    rowKey={record => record._id || record.id || JSON.stringify(record)}
-                    pagination={{
-                        pageSize: 10,
-                        showSizeChanger: true,
-                        showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
-                    }}
-                />
-
-                {/* Add Expense Modal */}
-                <Modal
-                    title="Add Expense"
-                    open={expenseModalVisible}
-                    onCancel={() => setExpenseModalVisible(false)}
-                    footer={null}
-                >
-                    <Form 
-                        form={expenseForm} 
-                        layout="vertical"
-                        onFinish={handleAddExpense}
-                    >
-                        <Form.Item
-                            name="description"
-                            label="Description"
-                            rules={[{ required: true, message: 'Please enter expense description' }]}
-                        >
-                            <Input placeholder="Enter expense description" />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="amount"
-                            label="Amount (Rs.)"
-                            rules={[
-                                { required: true, message: 'Please enter amount' },
-                                { 
-                                    validator: (_, value) => {
-                                        if (!value || isNaN(value) || parseFloat(value) <= 0) {
-                                            return Promise.reject('Please enter a valid amount greater than 0');
-                                        }
-                                        return Promise.resolve();
-                                    } 
-                                }
-                            ]}
-                        >
-                            <Input 
-                                type="number" 
-                                prefix="Rs." 
-                                placeholder="Enter amount"
-                            />
-                        </Form.Item>
-
-                        <Form.Item
-                            name="date"
-                            label="Date"
-                        >
-                            <Input type="date" />
-                        </Form.Item>
-
-                        <Form.Item>
-                            <Space>
-                                <Button 
-                                    type="primary" 
-                                    htmlType="submit"
-                                    loading={loading}
-                                >
-                                    Add Expense
-                                </Button>
-                                <Button onClick={() => setExpenseModalVisible(false)}>
-                                    Cancel
-                                </Button>
-                            </Space>
-                        </Form.Item>
-                    </Form>
-                </Modal>
-
-                {!showAllBudget && filteredData.length > initialLoadCount && budgetData.length > initialLoadCount && (
-                    <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 16 }}>
+            // Check if we have any data
+            if (budgetData.length === 0) {
+                return (
+                    <div>
+                        <h3>No budget data available</h3>
                         <Button 
                             type="primary" 
-                            onClick={() => setShowAllBudget(true)}
+                            onClick={fetchBudgetData}
                         >
-                            View All ({budgetData.length}) Budget Records
+                            Refresh Budget Data
                         </Button>
                     </div>
-                )}
-            </div>
-        );
-    });
+                );
+            }
+
+            return (
+                <div>
+                    <Row gutter={16} style={{ marginBottom: 16 }}>
+                        <Col span={4}>
+                            <Card>
+                                <Statistic 
+                                    title="Total Collections" 
+                                    value={`Rs. ${totalPayments.toLocaleString()}`}
+                                    valueStyle={{ color: '#52c41a' }}
+                                />
+                            </Card>
+                        </Col>
+                        <Col span={4}>
+                            <Card>
+                                <Statistic 
+                                    title="Total Refunds" 
+                                    value={`Rs. ${totalRefunds.toLocaleString()}`}
+                                    valueStyle={{ color: '#ff4d4f' }}
+                                />
+                            </Card>
+                        </Col>
+                        <Col span={4}>
+                            <Card>
+                                <Statistic 
+                                    title="Total Expenses" 
+                                    value={`Rs. ${totalExpenses.toLocaleString()}`}
+                                    valueStyle={{ color: '#ff7a45' }}
+                                />
+                            </Card>
+                        </Col>
+                        <Col span={4}>
+                            <Card>
+                                <Statistic 
+                                    title="Pending Collections" 
+                                    value={`Rs. ${pendingAmount.toLocaleString()}`}
+                                    valueStyle={{ color: '#faad14' }}
+                                />
+                            </Card>
+                        </Col>
+                        <Col span={8}>
+                            <Card>
+                                <Statistic 
+                                    title="Net Amount" 
+                                    value={`Rs. ${netAmount.toLocaleString()}`}
+                                    valueStyle={{ color: netAmount >= 0 ? '#52c41a' : '#ff4d4f' }}
+                                />
+                            </Card>
+                        </Col>
+                    </Row>
+
+                    <div style={{ display: 'flex', justifyContent: 'space-between', marginBottom: 16 }}>
+                        <Tabs 
+                            activeKey={budgetActiveTab} 
+                            onChange={handleTabChange}
+                            style={{ marginBottom: 16 }}
+                        >
+                            <TabPane tab="All Transactions" key="all"></TabPane>
+                            <TabPane tab="Payments" key="payment"></TabPane>
+                            <TabPane tab="Refunds" key="refund"></TabPane>
+                            <TabPane tab="Expenses" key="expense"></TabPane>
+                        </Tabs>
+                        
+                        <Button 
+                            type="primary" 
+                            icon={<PlusOutlined />} 
+                            onClick={() => {
+                                expenseForm.resetFields();
+                                setExpenseModalVisible(true);
+                            }}
+                        >
+                            Add Expense
+                        </Button>
+                    </div>
+
+                    <Table 
+                        columns={budgetColumns}
+                        dataSource={filteredData}
+                        rowKey={record => record._id || record.id || JSON.stringify(record)}
+                        pagination={{
+                            pageSize: 10,
+                            showSizeChanger: true,
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`
+                        }}
+                    />
+
+                    {/* Add Expense Modal */}
+                    <Modal
+                        title="Add Expense"
+                        open={expenseModalVisible}
+                        onCancel={() => setExpenseModalVisible(false)}
+                        footer={null}
+                    >
+                        <Form 
+                            form={expenseForm} 
+                            layout="vertical"
+                            onFinish={handleAddExpense}
+                        >
+                            <Form.Item
+                                name="description"
+                                label="Description"
+                                rules={[{ required: true, message: 'Please enter expense description' }]}
+                            >
+                                <Input placeholder="Enter expense description" />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="amount"
+                                label="Amount (Rs.)"
+                                rules={[
+                                    { required: true, message: 'Please enter amount' },
+                                    { 
+                                        validator: (_, value) => {
+                                            if (!value || isNaN(value) || parseFloat(value) <= 0) {
+                                                return Promise.reject('Please enter a valid amount greater than 0');
+                                            }
+                                            return Promise.resolve();
+                                        } 
+                                    }
+                                ]}
+                            >
+                                <Input 
+                                    type="number" 
+                                    prefix="Rs." 
+                                    placeholder="Enter amount"
+                                />
+                            </Form.Item>
+
+                            <Form.Item
+                                name="date"
+                                label="Date"
+                            >
+                                <Input type="date" />
+                            </Form.Item>
+
+                            <Form.Item>
+                                <Space>
+                                    <Button 
+                                        type="primary" 
+                                        htmlType="submit"
+                                        loading={loading}
+                                    >
+                                        Add Expense
+                                    </Button>
+                                    <Button onClick={() => setExpenseModalVisible(false)}>
+                                        Cancel
+                                    </Button>
+                                </Space>
+                            </Form.Item>
+                        </Form>
+                    </Modal>
+
+                    {!showAllBudget && filteredData.length > initialLoadCount && budgetData.length > initialLoadCount && (
+                        <div style={{ textAlign: 'center', marginTop: 16, marginBottom: 16 }}>
+                            <Button 
+                                type="primary" 
+                                onClick={() => setShowAllBudget(true)}
+                            >
+                                View All ({budgetData.length}) Budget Records
+                            </Button>
+                        </div>
+                    )}
+                </div>
+            );
+        };
+    }, [budgetColumns, fetchBudgetData, loading]);
 
     // Update the items array to include the Budget tab
     const items = [
@@ -4292,12 +4299,6 @@ Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
         // apiService.updateFollowupStatus(teacherId, !followupTeachers[teacherId]);
         
         message.success(`${!followupTeachers[teacherId] ? 'Added to' : 'Removed from'} followup`);
-    };
-
-    // Add this after the fetchData function to conditionally limit data
-    const getLimitedData = (data, showAll) => {
-      if (!data || !Array.isArray(data)) return [];
-      return showAll ? data : data.slice(0, initialLoadCount);
     };
 
     // Add this just before the return statement
