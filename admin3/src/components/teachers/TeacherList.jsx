@@ -77,13 +77,6 @@ const TeacherList = () => {
     // Add this state variable after all the other state declarations, around line ~55
     const [followupTeachers, setFollowupTeachers] = useState({});
 
-    // Add these state variables to the top of the component where other state variables are defined
-    const [vacancyPage, setVacancyPage] = useState(1);
-    const [vacancyPageSize, setVacancyPageSize] = useState(10);
-    const [totalVacancies, setTotalVacancies] = useState(0);
-    const [loadingMore, setLoadingMore] = useState(false);
-    const [hasMore, setHasMore] = useState(true);
-
     // Add useEffect to load followup data from localStorage on component mount
     useEffect(() => {
         try {
@@ -418,14 +411,10 @@ const TeacherList = () => {
     }
 }, [form]);
 
-const fetchData = async (showLoading = true, page = vacancyPage, loadMore = false) => {
+const fetchData = async (showLoading = true) => {
     try {
-        if (showLoading && !loadMore) {
+        if (showLoading) {
             setLoading(true);
-        }
-        
-        if (loadMore) {
-            setLoadingMore(true);
         }
 
         // Get stored status updates from localStorage
@@ -445,7 +434,7 @@ const fetchData = async (showLoading = true, page = vacancyPage, loadMore = fals
         if (activeTab === 'vacancies') {
             const [teachersResponse, vacanciesResponse] = await Promise.all([
                 apiService.getAllTeachers(),
-                apiService.getVacanciesPaginated(page, vacancyPageSize) // Update API call
+                apiService.getAllVacancies()
             ]);
 
             // Process teachers with stored status
@@ -470,22 +459,7 @@ const fetchData = async (showLoading = true, page = vacancyPage, loadMore = fals
             });
 
             setTeachers(teachersToSet);
-            
-            // Update total count if available in response
-            if (vacanciesResponse.total) {
-                setTotalVacancies(vacanciesResponse.total);
-                setHasMore(page * vacancyPageSize < vacanciesResponse.total);
-            } else {
-                // If no total in response, check if we got fewer items than requested
-                setHasMore(vacanciesResponse.length === vacancyPageSize);
-            }
-            
-            // If loading more, append to existing vacancies
-            if (loadMore) {
-                setVacancies(prev => [...prev, ...vacanciesResponse.data || vacanciesResponse]);
-            } else {
-                setVacancies(vacanciesResponse.data || vacanciesResponse);
-            }
+            setVacancies(vacanciesResponse);
             
             // After teachers are loaded, fetch budget data with the updated teacher information
             await fetchBudgetData();
@@ -514,15 +488,13 @@ const fetchData = async (showLoading = true, page = vacancyPage, loadMore = fals
         message.error('Failed to fetch data');
     } finally {
         setLoading(false);
-        setLoadingMore(false);
     }
 };
 
     // Data fetching
     useEffect(() => {
         console.log('Component mounted, fetching data...');
-        setVacancyPage(1); // Reset to page 1 on mount
-        fetchData(true, 1, false);
+        fetchData();
     }, []);
     
     useEffect(() => {
@@ -1855,7 +1827,8 @@ const handlePaymentResponse = (hasPaid) => {
                 { text: 'Closed', value: 'closed' }
             ],
             onFilter: (value, record) => record.status === value,
-            filterMultiple: false
+            filterMultiple: false,
+            defaultFilteredValue: ['open']
         },
         {
             title: 'Featured',
@@ -2016,7 +1989,8 @@ const applicantColumns = [
                 const partialPayments = payments.filter(p => p.status === 'partial');
                 const fullPayments = payments.filter(p => p.status !== 'partial');
                 
-              
+                console.log(`DEBUG Status - Payments: ${payments.length}, Refunds: ${refunds.length}, Partial: ${partialPayments.length}`);
+                
                 // Create tags array
                 const tags = [];
                 
@@ -3550,26 +3524,16 @@ const budgetColumns = [
                         className="main-table"
                         rowClassName={(record, index) => index === highlightedRow ? 'highlighted-row' : ''}
                         onChange={handleTableChange}
-                        pagination={false} // Disable built-in pagination
+                        pagination={{
+                            current: currentPage,
+                            pageSize: pageSize,
+                            pageSizeOptions: ['10', '20', '50', '100'],
+                            showSizeChanger: true,
+                            showQuickJumper: true,
+                            showTotal: (total, range) => `${range[0]}-${range[1]} of ${total} items`,
+                            position: ['bottomRight']
+                        }}
                     />
-                    
-                    {/* Add Load More button */}
-                    {vacancies.length > 0 && hasMore && (
-                        <div style={{ textAlign: 'center', marginTop: 16 }}>
-                            <Button 
-                                onClick={loadMoreVacancies} 
-                                loading={loadingMore}
-                                type="primary"
-                            >
-                                Load More
-                            </Button>
-                        </div>
-                    )}
-                    
-                    {/* Show counts */}
-                    <div style={{ textAlign: 'right', marginTop: 16, color: '#8c8c8c' }}>
-                        Showing {vacancies.length} of {totalVacancies} vacancies
-                    </div>
                 </div>
             )
         },
@@ -4267,13 +4231,6 @@ Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
         // apiService.updateFollowupStatus(teacherId, !followupTeachers[teacherId]);
         
         message.success(`${!followupTeachers[teacherId] ? 'Added to' : 'Removed from'} followup`);
-    };
-
-    // Add a function to load more vacancies
-    const loadMoreVacancies = () => {
-        const nextPage = vacancyPage + 1;
-        setVacancyPage(nextPage);
-        fetchData(false, nextPage, true);
     };
 
     return (
