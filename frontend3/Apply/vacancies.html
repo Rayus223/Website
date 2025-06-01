@@ -482,16 +482,7 @@
             
             // Save updated history
             localStorage.setItem('applicationHistory', JSON.stringify(applicationHistory));
-              // Get count of recent applications (last hour)
-            function getRecentApplicationCount() {
-            const applicationHistory = JSON.parse(localStorage.getItem('applicationHistory') || '[]');
-            const oneHourAgo = Date.now() - (60 * 60 * 1000);
             
-            // Count applications in the last hour
-            return applicationHistory.filter(timestamp => timestamp > oneHourAgo).length;
-        }
-
-             
             // Check if limit is exceeded
             const recentApplications = getRecentApplicationCount();
             
@@ -505,7 +496,14 @@
             return false; // No ban
         }
 
-      
+        // Get count of recent applications (last hour)
+        function getRecentApplicationCount() {
+            const applicationHistory = JSON.parse(localStorage.getItem('applicationHistory') || '[]');
+            const oneHourAgo = Date.now() - (60 * 60 * 1000);
+            
+            // Count applications in the last hour
+            return applicationHistory.filter(timestamp => timestamp > oneHourAgo).length;
+        }
 
         // Show ban message to user
         function showBanMessage() {
@@ -1193,13 +1191,12 @@
             });
         }
 
-// Modify the updateApplicationCounter function to work silently in the background
+        // Modify the updateApplicationCounter function to work silently in the background
         function updateApplicationCounter() {
             // This function now just tracks applications in the background
             // without updating any UI elements
             getRecentApplicationCount(); // Still count applications but don't display
         }
-         
     </script>
 </body>
 </html>
