@@ -3804,14 +3804,14 @@ const budgetColumns = [
             const formattedText = `
 Dear Sir Home Tuition - Vacancy
 ---------------------------
-*Title : * ${vacancy.title}
-*Subject : * ${vacancy.subject}
-*Class : * ${vacancy.class}a
-*Time : * ${vacancy.time}
-*Location : * ${vacancy.location}
-*Gender : * ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
-*Salary : * ${vacancy.salary}
-*Description : * ${vacancy.description}
+*Title :* ${vacancy.title}
+*Subject :* ${vacancy.subject}
+*Class :* ${vacancy.class}a
+*Time :* ${vacancy.time}
+*Location :* ${vacancy.location}
+*Gender :* ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
+*Salary :* ${vacancy.salary}
+*Description :* ${vacancy.description}
 
 Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
 `;
@@ -3895,14 +3895,14 @@ Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
                 const formattedText = `
 Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
 -------------------------------------------------------------
-*Name : * ${parent.parentName || 'N/A'}
-*Phone : * ${parent.phone || 'N/A'}
-*Address : * ${parent.address || 'N/A'}
-*Grade : * ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
-*Subjects : * ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
-*Preferred Teacher : * ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
-*Preferred Time : * ${parent.preferredTime || 'N/A'}
-*Salary Offered : * ${parent.salary || 'Negotiable'}
+*Name :* ${parent.parentName || 'N/A'}
+*Phone :* ${parent.phone || 'N/A'}
+*Address :* ${parent.address || 'N/A'}
+*Grade :* ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
+*Subjects :* ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
+*Preferred Teacher :* ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
+*Preferred Time :* ${parent.preferredTime || 'N/A'}
+*Salary Offered :* ${parent.salary || 'Negotiable'}
 `;
 
                 // Copy to clipboard
@@ -3928,15 +3928,15 @@ Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
                     const formattedText = `
 Dear Sir Home Tuition - Parent Details (Vacancy: ${vacancy.title})
 -------------------------------------------------------------
-*Name : * ${parent.parentName || 'N/A'}
-*Phone : * ${parent.phone || 'N/A'}
-*Address : * ${parent.address || 'N/A'}
-*Grade : * ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
-*Subjects : * ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
-*Preferred Teacher : * ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
-*Preferred Time : * ${parent.preferredTime || 'N/A'}
-*Salary Offered : * ${parent.salary || 'Negotiable'}
-*Status : * ${parent.status ? parent.status.toUpperCase() : 'N/A'}
+*Name :* ${parent.parentName || 'N/A'}
+*Phone :* ${parent.phone || 'N/A'}
+*Address :* ${parent.address || 'N/A'}
+*Grade :* ${parent.grade ? `Grade ${parent.grade}` : 'N/A'}
+*Subjects :* ${parent.subjects ? (Array.isArray(parent.subjects) ? parent.subjects.join(', ') : parent.subjects) : 'N/A'}
+*Preferred Teacher :* ${parent.preferredTeacher ? parent.preferredTeacher.charAt(0).toUpperCase() + parent.preferredTeacher.slice(1) : 'N/A'}
+*Preferred Time :* ${parent.preferredTime || 'N/A'}
+*Salary Offered :* ${parent.salary || 'Negotiable'}
+*Status :* ${parent.status ? parent.status.toUpperCase() : 'N/A'}
 `;
 
                     // Copy to clipboard
