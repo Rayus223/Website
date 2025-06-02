@@ -3806,7 +3806,7 @@ Dear Sir Home Tuition - Vacancy
 ---------------------------
 *Title :* ${vacancy.title}
 *Subject :* ${vacancy.subject}
-*Class :* ${vacancy.class}a
+*Class :* ${vacancy.class}
 *Time :* ${vacancy.time}
 *Location :* ${vacancy.location}
 *Gender :* ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
