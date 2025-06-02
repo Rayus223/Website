@@ -1268,7 +1268,7 @@ select#grade:focus {
                 </div>
             `;
         } 
-        else if (grade === 11 || grade === 12 || grade === 'A level 1st Year' || grade === 'A level 2nd Year' || grade === 'IB 1st Year' || grade === 'IB 2nd Year' || grade === 'Bachelor') {
+        else if (grade === 11 || grade === 12 || grade === 13 || grade === 'A level 1st Year' || grade === 'A level 2nd Year' || grade === 'IB 1st Year' || grade === 'IB 2nd Year' || grade === 'Bachelor') {
             subjectGrid.innerHTML = `
                 <div class="stream-container">
                     <div class="stream-column">
@@ -1305,7 +1305,7 @@ select#grade:focus {
             .map(checkbox => checkbox.value);
         
         // Only check for selected subjects if grade is 11 or 12
-        if ((grade === 11 || grade === 12 ||  grade === 'A level 1st Year' || grade === 'A level 2nd Year' || grade === 'IB 1st Year' || grade === 'IB 2nd Year' || grade === 'Bachelor') && selectedSubjects.length === 0) {
+        if ((grade === 11 || grade === 12) && selectedSubjects.length === 0) {
             alert('Please select at least one subject');
             return;
         }
@@ -1393,7 +1393,7 @@ select#grade:focus {
             }
         
             // Only check for selected subjects if grade is 11 or 12
-            if ((grade === 11 || grade === 12 || grade === 'A level 1st Year' || grade === 'A level 2nd Year' || grade === 'IB 1st Year' || grade === 'IB 2nd Year' || grade === 'Bachelor') && selectedSubjects.length === 0) {
+            if ((grade === 11 || grade === 12) && selectedSubjects.length === 0) {
                 Swal.fire({
                     title: 'No Subjects Selected',
                     text: 'Please select at least one subject',
