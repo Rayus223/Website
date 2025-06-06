@@ -76,6 +76,13 @@
                         <option value="10">Grade 10</option>
                         <option value="11">Grade 11</option>
                         <option value="12">Grade 12</option>
+                        <option value="13">A-Level</option>
+                        <option value="14">IB Board</option>
+                        <option value="15">ICSE/CBSE</option>
+                        
+                        
+                        
+                        
                     </select>
                     <label for="grade">Select the highest class you can teach</label>
                 </div>
@@ -1088,6 +1095,57 @@ select#grade:focus {
 }
 </style>
 
+<style>
+/* Add these styles after the existing subject-related CSS */
+.custom-subjects {
+    background: #f8f9fa;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 20px;
+}
+
+.custom-subjects p {
+    color: #555;
+    margin-bottom: 15px;
+    font-size: 16px;
+    display: flex;
+    align-items: center;
+}
+
+.custom-subjects p i {
+    color: #43cea2;
+    margin-right: 10px;
+    font-size: 18px;
+}
+
+.custom-subjects .form-group {
+    margin-bottom: 0;
+}
+
+.custom-subjects input {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #ddd;
+    border-radius: 8px;
+    font-size: 16px;
+    transition: all 0.3s ease;
+}
+
+.custom-subjects input:focus {
+    border-color: #43cea2;
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(67, 206, 162, 0.1);
+}
+
+.helper-text {
+    display: block;
+    margin-top: 8px;
+    font-size: 13px;
+    color: #666;
+    font-style: italic;
+}
+</style>
+
 <script>
     // Form data storage
     let formData = {};
@@ -1289,6 +1347,29 @@ select#grade:focus {
             renderSubjectCards(scienceSubjects, document.getElementById('scienceSubjects'));
             renderSubjectCards(managementSubjects, document.getElementById('managementSubjects'));
         }
+        else if (grade === 13 || grade === 14 || grade === 15) {
+            // For A-Level, IB Board, and ICSE/CBSE
+            let boardType = "";
+            if (grade === 13) boardType = "A-Level";
+            else if (grade === 14) boardType = "IB Board";
+            else if (grade === 15) boardType = "ICSE/CBSE";
+            
+            subjectGrid.innerHTML = `
+                <div class="custom-subjects">
+                    <p><i class="fas fa-info-circle"></i> Enter subjects for ${boardType}</p>
+                    <div class="form-group" style="margin-top: 15px;">
+                        <input type="text" id="customSubjects" placeholder="Example: Math, Physics, Chemistry (comma separated)">
+                        <small class="helper-text">Enter subjects separated by commas</small>
+                    </div>
+                </div>
+            `;
+            
+            // Add event listener to store subjects when entered
+            document.getElementById('customSubjects').addEventListener('input', function() {
+                const subjects = this.value.split(',').map(s => s.trim()).filter(s => s);
+                // You can use the subjects array later when submitting the form
+            });
+        }
     }
 
 
@@ -1356,8 +1437,20 @@ select#grade:focus {
             const grade = parseInt(document.getElementById('grade').value);
         
             // Get selected subjects
-            const selectedSubjects = Array.from(document.querySelectorAll('.subject-checkbox:checked'))
-                .map(checkbox => checkbox.value);
+            let selectedSubjects = [];
+            if (grade === 11 || grade === 12) {
+                selectedSubjects = Array.from(document.querySelectorAll('.subject-checkbox:checked'))
+                    .map(checkbox => checkbox.value);
+            } else if (grade === 13 || grade === 14 || grade === 15) {
+                // For A-Level, IB Board, and ICSE/CBSE, get custom subjects
+                const customSubjectsElement = document.getElementById('customSubjects');
+                if (customSubjectsElement) {
+                    selectedSubjects = customSubjectsElement.value
+                        .split(',')
+                        .map(s => s.trim())
+                        .filter(s => s);
+                }
+            }
         
             // Validations
             if (!fullName) {
@@ -1387,11 +1480,20 @@ select#grade:focus {
                 return;
             }
         
-            // Only check for selected subjects if grade is 11 or 12
+            // Subject validation based on grade
             if ((grade === 11 || grade === 12) && selectedSubjects.length === 0) {
                 Swal.fire({
                     title: 'No Subjects Selected',
                     text: 'Please select at least one subject',
+                    icon: 'error'
+                });
+                return;
+            }
+            
+            if ((grade === 13 || grade === 14 || grade === 15) && selectedSubjects.length === 0) {
+                Swal.fire({
+                    title: 'No Subjects Entered',
+                    text: 'Please enter at least one subject you can teach',
                     icon: 'error'
                 });
                 return;
@@ -1420,7 +1522,7 @@ select#grade:focus {
                 return;
             }
         
-            // Store form data with default empty array for subjects if grade is 1-10
+            // Store form data
             formData = {
                 fullName,
                 email,
@@ -2315,7 +2417,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 // Add this to your document ready function
 document.addEventListener('DOMContentLoaded', () => {
-    
+    // ... existing code ...
     
     // Password strength checker
     const passwordInput = document.getElementById('password');
@@ -2433,6 +2535,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Initialize fingerprinting
     initFingerprint();
     
+    // ... other initialization code ...
 });
 </script>
 
