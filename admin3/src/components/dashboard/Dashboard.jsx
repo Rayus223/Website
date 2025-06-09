@@ -187,73 +187,77 @@ const Dashboard = () => {
 
     return (
         <div className="dashboard">
-            {/* Overview Section */}
-            <div className="overview-section">
-                <h2 className="section-title">Overview</h2>
-                <div className="stats-container">
-                    <div 
-                        className="stat-card" 
-                        onClick={handlePendingPaymentsClick}
-                        style={{ cursor: 'pointer' }}
-                    >
-                        <div className="stat-content">
-                            <span className="stat-label">Pending Payments</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.pendingPayments}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-content">
-                            <span className="stat-label">Total Parents</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.parents}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="stat-card">
-                        <div className="stat-content">
-                            <span className="stat-label">Total Teachers</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.teachers}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            {/* Vacancies and Refunds Section */}
-            <div className="applications-section">
-                <h2 className="section-title">Vacancies and Refunds</h2>
-                <div className="stats-container">
-                    <div className="stat-card status-approved">
-                        <div className="stat-content">
-                            <span className="stat-label">Open Vacancies</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.vacancies.open}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="stat-card status-pending">
-                        <div className="stat-content">
-                            <span className="stat-label">Closed Vacancies</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.vacancies.closed}
-                            </span>
-                        </div>
-                    </div>
-                    <div className="stat-card status-rejected">
-                        <div className="stat-content">
-                            <span className="stat-label">Total Refunds</span>
-                            <span className="stat-value">
-                                {loading ? <Spin size="small" /> : stats.refunds}
-                            </span>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
+            {/* TeacherList - Now placed at the top for better performance */}
             <TeacherList ref={teacherListRef} />
+            
+            {/* Stats sections moved to the bottom */}
+            <div className="stats-section-container" style={{ marginTop: '2rem' }}>
+                {/* Overview Section */}
+                <div className="overview-section">
+                    <h2 className="section-title">Overview</h2>
+                    <div className="stats-container">
+                        <div 
+                            className="stat-card" 
+                            onClick={handlePendingPaymentsClick}
+                            style={{ cursor: 'pointer' }}
+                        >
+                            <div className="stat-content">
+                                <span className="stat-label">Pending Payments</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.pendingPayments}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-content">
+                                <span className="stat-label">Total Parents</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.parents}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="stat-card">
+                            <div className="stat-content">
+                                <span className="stat-label">Total Teachers</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.teachers}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                {/* Vacancies and Refunds Section */}
+                <div className="applications-section">
+                    <h2 className="section-title">Vacancies and Refunds</h2>
+                    <div className="stats-container">
+                        <div className="stat-card status-approved">
+                            <div className="stat-content">
+                                <span className="stat-label">Open Vacancies</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.vacancies.open}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="stat-card status-pending">
+                            <div className="stat-content">
+                                <span className="stat-label">Closed Vacancies</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.vacancies.closed}
+                                </span>
+                            </div>
+                        </div>
+                        <div className="stat-card status-rejected">
+                            <div className="stat-content">
+                                <span className="stat-label">Total Refunds</span>
+                                <span className="stat-value">
+                                    {loading ? <Spin size="small" /> : stats.refunds}
+                                </span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
     );
 };
