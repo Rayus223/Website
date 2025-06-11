@@ -1850,6 +1850,7 @@ const handlePaymentResponse = (hasPaid) => {
             ],
             onFilter: (value, record) => record.status === value,
             filterMultiple: false
+        },
         {
             title: 'Featured',
             dataIndex: 'featured',
