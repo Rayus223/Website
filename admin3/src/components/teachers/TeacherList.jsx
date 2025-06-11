@@ -1849,9 +1849,7 @@ const handlePaymentResponse = (hasPaid) => {
                 { text: 'Closed', value: 'closed' }
             ],
             onFilter: (value, record) => record.status === value,
-            filterMultiple: false,
-            defaultFilteredValue: ['open']
-        },
+            filterMultiple: false
         {
             title: 'Featured',
             dataIndex: 'featured',
