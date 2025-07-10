@@ -15,6 +15,7 @@ import apiService from '../../services/api';
 import './styles.css';
 import dayjs from 'dayjs';
 import { ensureTeacherData, formatDate } from '../../utils/helpers';
+import VacancyImageGenerator from './VacancyImageGenerator';
 
 
 
@@ -1870,6 +1871,7 @@ const handlePaymentResponse = (hasPaid) => {
             key: 'actions',
             render: (_, record) => (
                 <Space>
+                    
                     <Tooltip title="Copy Vacancy">
                         <Button 
                             icon={<CopyOutlined />} 
@@ -1897,8 +1899,10 @@ const handlePaymentResponse = (hasPaid) => {
                             onClick={() => handleDeleteVacancy(record._id)}
                         />
                     </Tooltip>
-                    {/* Add the VacancyImageGenerator component */}
-                    <VacancyImageGenerator vacancy={record} />
+                    <Tooltip title="Generate Vacancy Image">
+                        <VacancyImageGenerator vacancy={record} />
+                    </Tooltip>
+                   
                 </Space>
             )
         }
