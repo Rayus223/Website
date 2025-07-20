@@ -408,15 +408,12 @@
         } else {
             // For production, use the same domain or explicitly set the production API URL
             const apiDomain = 'https://api.dearsirhometuition.com';
-            console.log('Using production API domain:', apiDomain);
             return apiDomain + '/api';
         }
     }
     
     // Handle page initialization
     document.addEventListener('DOMContentLoaded', function() {
-        console.log('DOM content loaded, initializing...');
-        
         // First check for reset token in URL (highest priority)
         if (!checkForResetToken()) {
             // If no reset token, then check login status
@@ -426,27 +423,17 @@
 
     // Function to check for reset token in URL
     function checkForResetToken() {
-        console.log('Checking for reset token in URL...');
         const urlParams = new URLSearchParams(window.location.search);
         const token = urlParams.get('token');
         const email = urlParams.get('email');
         
-        console.log('URL parameters:', { 
-            hasToken: !!token, 
-            hasEmail: !!email,
-            rawUrl: window.location.href,
-            search: window.location.search
-        });
-        
         if (token && email) {
-            console.log('Reset token found in URL, showing password reset form');
             // Store token and email in session storage for the reset process
             sessionStorage.setItem('resetToken', token);
             sessionStorage.setItem('resetEmail', email);
             showPasswordResetForm();
             return true;
         } else {
-            console.log('No reset token found in URL, showing login form');
             showLoginForm();
             return false;
         }
@@ -465,9 +452,6 @@
         const confirmPassword = document.getElementById('confirmPassword').value;
         const resetToken = sessionStorage.getItem('resetToken');
         const resetEmail = sessionStorage.getItem('resetEmail');
-        
-        console.log('Resetting password for email:', resetEmail);
-        console.log('Has token:', !!resetToken);
         
         if (!resetToken || !resetEmail) {
             alert('Missing reset information. Please try requesting a new password reset link.');
@@ -495,7 +479,6 @@
         
         try {
             const apiUrl = `${getApiBaseUrl()}/teacher-apply/complete-reset`;
-            console.log('Sending password reset to:', apiUrl);
             
             const response = await fetch(apiUrl, {
                 method: 'POST',
@@ -510,14 +493,10 @@
             });
             
             if (!response.ok) {
-                const errorText = await response.text();
-                console.error('Password reset failed with status:', response.status);
-                console.error('Error response:', errorText);
                 throw new Error(`Server returned status ${response.status}`);
             }
             
             const data = await response.json();
-            console.log('Password reset response:', data);
             
             if (data.success) {
                 alert('Password has been reset successfully. Please login with your new password.');
@@ -530,7 +509,6 @@
                 alert(data.message || 'Failed to reset password. The link may have expired.');
             }
         } catch (error) {
-            console.error('Error resetting password:', error);
             alert('Error resetting password: ' + error.message);
         } finally {
             resetBtn.disabled = false;
@@ -544,7 +522,6 @@
         if (!token) return; // No token, needs to log in
         
         try {
-            console.log('Checking existing login token...');
             // Verify token is still valid
             const response = await fetch(`${getApiBaseUrl()}/teacher-apply/verify-token`, {
                 method: 'GET',
@@ -554,27 +531,20 @@
                 }
             });
             
-            console.log('Token verification status:', response.status);
-            
             if (response.ok) {
                 // Token is valid, redirect to profile page
-                console.log('Token valid, redirecting to profile page');
                 window.location.href = 'teacherProfile.html';
             } else {
                 // Only clear token for unauthorized responses
                 if (response.status === 401 || response.status === 403) {
-                    console.log('Token invalid (unauthorized), clearing token');
                     localStorage.removeItem('token');
                 } else {
                     // For server errors, we'll still try to proceed to profile page
-                    console.log('Server error but not unauthorized, attempting profile page anyway');
                     window.location.href = 'teacherProfile.html';
                 }
             }
         } catch (error) {
-            console.error('Network error verifying login:', error);
             // For network errors, still try to proceed to profile
-            console.log('Network error, attempting to proceed to profile anyway');
             window.location.href = 'teacherProfile.html';
         }
     }
@@ -609,19 +579,15 @@
             return;
         }
 
-        console.log('Attempting login for email:', email);
         try {
             // First check if user is registered
-            console.log('Checking if user is registered...');
             const checkResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
             
             if (!checkResponse.ok) {
-                console.error('Registration check failed with status:', checkResponse.status);
                 throw new Error(`Status: ${checkResponse.status}`);
             }
             
             const checkData = await checkResponse.json();
-            console.log('Registration check response:', checkData);
 
             if (!checkData.isRegistered) {
                 alert('You need to sign up first. Redirecting to signup page...');
@@ -630,7 +596,6 @@
             }
 
             // Proceed with login if registered
-            console.log('User is registered, attempting login...');
             const loginResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/login`, {
                 method: 'POST',
                 headers: {
@@ -639,27 +604,20 @@
                 body: JSON.stringify({ email, password })
             });
 
-            // Log full response details
-            console.log('Login response status:', loginResponse.status);
-            console.log('Login response headers:', Object.fromEntries([...loginResponse.headers.entries()]));
-
             // Clone the response to read it twice
             const responseClone = loginResponse.clone();
             
             // Try to get the raw response text first
             const rawResponseText = await responseClone.text();
-            console.log('Raw login response text:', rawResponseText);
             
             if (!loginResponse.ok) {
-                console.error('Login failed with status:', loginResponse.status);
                 // Try to parse the error response if it's JSON
                 let errorMessage = 'Invalid credentials';
                 try {
                     const errorData = JSON.parse(rawResponseText);
                     errorMessage = errorData.message || errorMessage;
-                    console.error('Login error details:', errorData);
                 } catch (e) {
-                    console.error('Could not parse error response as JSON');
+                    // Could not parse error response as JSON
                 }
                 alert(`Login failed: ${errorMessage}`);
                 throw new Error(errorMessage);
@@ -669,14 +627,11 @@
             let loginData;
             try {
                 loginData = JSON.parse(rawResponseText);
-                console.log('Parsed login response:', loginData);
             } catch (e) {
-                console.error('Error parsing login response:', e);
                 throw new Error('Server returned invalid JSON');
             }
 
             if (loginData.success) {
-                console.log('Login successful, saving token and redirecting...');
                 localStorage.setItem('token', loginData.token);
                 localStorage.setItem('teacherData', JSON.stringify(loginData.teacher));
                 // Redirect to application page after successful login
@@ -685,7 +640,6 @@
                 alert(loginData.message || 'Invalid credentials');
             }
         } catch (error) {
-            console.error('Error during login process:', error);
             alert('Error logging in. Please try again. ' + error.message);
         }
     }
@@ -708,14 +662,9 @@
         resetBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
 
         try {
-            console.log('Sending reset link request for:', resetEmail);
-            console.log('Using API URL:', getApiBaseUrl());
-            
             // Check if user is registered before sending reset link
             try {
-                console.log('Checking if user is registered...');
                 const checkUrl = `${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`;
-                console.log('Check registration URL:', checkUrl);
                 
                 const checkResponse = await fetch(checkUrl);
                 
@@ -724,7 +673,6 @@
                 }
                 
                 const checkData = await checkResponse.json();
-                console.log('Registration check response:', checkData);
 
                 if (!checkData.isRegistered) {
                     alert('This email is not registered. Please sign up first.');
@@ -733,53 +681,49 @@
                     return;
                 }
             } catch (checkError) {
-                console.error('Error checking registration:', checkError);
                 alert('Error checking if email is registered. Please try again later.');
                 throw checkError;
             }
 
             // Send reset password request
             try {
-                console.log('Sending reset password request...');
                 const resetUrl = `${getApiBaseUrl()}/teacher-apply/reset-password`;
-                console.log('Reset password URL:', resetUrl);
+                
+                const headers = {
+                    'Content-Type': 'application/json'
+                };
+                
+                // Only add the dev mode header when in development mode
+                if (DEV_MODE) {
+                    headers['X-Dev-Mode'] = 'true';
+                }
                 
                 const response = await fetch(resetUrl, {
                     method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                        'X-Dev-Mode': DEV_MODE.toString() // Send development mode flag to backend
-                    },
+                    headers: headers,
                     body: JSON.stringify({ email: resetEmail })
                 });
                 
                 if (!response.ok) {
-                    const errorText = await response.text();
-                    console.error('Reset request failed with status:', response.status);
-                    console.error('Error details:', errorText);
                     throw new Error(`Server returned status ${response.status}`);
                 }
                 
                 const data = await response.json();
-                console.log('Reset password response:', data);
 
                 if (data.success) {
                     alert('Password reset link has been sent to your email');
                     if (DEV_MODE) {
                         alert('Development mode: Check console for reset link');
-                        console.log('Reset link:', data.resetUrl);
                     }
                     backToLogin();
                 } else {
                     alert(data.message || 'Error sending reset link');
                 }
             } catch (resetError) {
-                console.error('Error sending reset request:', resetError);
                 alert('Error sending reset link. ' + resetError.message);
                 throw resetError;
             }
         } catch (error) {
-            console.error('Error in reset process:', error);
             // Error is already handled in the inner catch blocks
         } finally {
             resetBtn.disabled = false;
