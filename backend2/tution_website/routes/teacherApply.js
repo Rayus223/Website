@@ -7,6 +7,7 @@ const {
     login, 
     checkRegistration, 
     resetPasswordRequest, 
+    completeReset,
     getProfile,
     acceptTeacherApplication,    
     rejectTeacherApplication,   
@@ -198,6 +199,7 @@ router.post('/signup',
 router.post('/login', login);
 router.get('/check-registration', checkRegistration);
 router.post('/reset-password', resetPasswordRequest);
+router.post('/complete-reset', completeReset);
 
 // Add verify-token endpoint
 router.get('/verify-token', async (req, res) => {
@@ -478,26 +480,27 @@ router.post('/apply-vacancy/:id', authMiddleware, async (req, res) => {
     }
 });
 
-// Get all teachers (both direct signups and vacancy applications)
-router.get('/all', async (req, res) => {
-    try {
-      const teachers = await Teacher.find()
-        .select('-password')
-        .sort({ createdAt: -1 });
-      
-      res.json({
-        success: true,
-        data: teachers
-      });
-    } catch (error) {
-      console.error('Error fetching teachers:', error);
-      res.status(500).json({ 
-        success: false, 
-        message: 'Error fetching teachers',
-        error: error.message 
-      });
+// Get all teacher applications (admin protected)
+router.get('/all', authMiddleware, async (req, res) => {
+  try {
+    let teachers;
+    
+    // Use the appropriate database connection based on the user's role
+    if (req.userRole === 'moderator' && req.dbConnection) {
+      // For moderator, use the moderator database
+      const ModeratorTeacher = req.dbConnection.model('TeacherApply', Teacher.schema);
+      teachers = await ModeratorTeacher.find().sort({ createdAt: -1 });
+    } else {
+      // For admin, use the default connection
+      teachers = await Teacher.find().sort({ createdAt: -1 });
     }
-  });
+    
+    res.status(200).json(teachers);
+  } catch (error) {
+    console.error('Error getting teacher applications:', error);
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+});
   
   // GET teachers by status (e.g., /status/approved?latitude=28.61&longitude=77.20&radiusKm=5)
   router.get('/status/:status', async (req, res) => {

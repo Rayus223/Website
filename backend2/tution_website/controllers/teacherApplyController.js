@@ -237,18 +237,146 @@ exports.resetPasswordRequest = async (req, res) => {
             { expiresIn: '1h' }
         );
 
-        // In a real application, you would send this token via email
-        // For now, we'll just return it in the response
+        // Import required modules
+        const emailConfig = require('../config/email.config');
+        
+        // Detect development mode from request headers or env variable
+        const isDev = req.headers['x-dev-mode'] === 'true' || process.env.NODE_ENV === 'development';
+        console.log('Development mode detected:', isDev);
+        
+        // Create reset URL with proper domain based on environment
+        const baseUrl = isDev ? emailConfig.devFrontendUrl : emailConfig.frontendUrl;
+        const resetUrl = `${baseUrl}/Apply/teacher.html?token=${resetToken}&email=${encodeURIComponent(email)}`;
+        
+        console.log('Password reset link generated:', resetUrl);
+        
+        // Track whether email was sent successfully
+        let emailSent = false;
+        
+        try {
+            // Use SendGrid for email sending
+            const sgMail = require('@sendgrid/mail');
+            sgMail.setApiKey(emailConfig.sendgrid.apiKey);
+            
+            const msg = {
+                to: email,
+                from: emailConfig.sendgrid.fromEmail,
+                subject: 'Password Reset Request - Dear Sir Home Tuition',
+                html: `
+                    <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">
+                        <div style="text-align: center; margin-bottom: 20px;">
+                            <h1 style="color: #185a9d;">Dear Sir Home Tuition</h1>
+                            <h2 style="color: #43cea2;">Password Reset Request</h2>
+                        </div>
+                        <p style="font-size: 16px; line-height: 1.6;">Hello ${teacher.fullName},</p>
+                        <p style="font-size: 16px; line-height: 1.6;">We received a request to reset your password. Please click the button below to create a new password:</p>
+                        <div style="text-align: center; margin: 30px 0;">
+                            <a href="${resetUrl}" style="background: linear-gradient(135deg, #43cea2, #185a9d); color: white; padding: 12px 24px; text-decoration: none; border-radius: 4px; font-weight: bold; display: inline-block;">Reset My Password</a>
+                        </div>
+                        <p style="font-size: 16px; line-height: 1.6;">This link will expire in 1 hour for security reasons.</p>
+                        <p style="font-size: 16px; line-height: 1.6;">If you did not request a password reset, please ignore this email or contact support if you have concerns.</p>
+                        <div style="margin-top: 30px; padding-top: 20px; border-top: 1px solid #e0e0e0; color: #666; font-size: 14px;">
+                            <p>Dear Sir Home Tuition</p>
+                            <p>This is an automated email, please do not reply.</p>
+                        </div>
+                    </div>
+                `
+            };
+            
+            await sgMail.send(msg);
+            console.log('Password reset email sent to:', email);
+            emailSent = true;
+        } catch (emailError) {
+            console.error('Error sending email:', emailError);
+            console.log('Email configuration used:', {
+                provider: 'SendGrid',
+                apiKeyProvided: !!emailConfig.sendgrid.apiKey,
+                fromEmail: emailConfig.sendgrid.fromEmail
+            });
+            
+            // Fall back to just console logging the reset URL
+            console.log('----------------------------------------');
+            console.log('FALLBACK: Password Reset URL (copy this):');
+            console.log(resetUrl);
+            console.log('----------------------------------------');
+        }
+
+        // For development/demo purposes, also return the token and URL
         res.json({
             success: true,
-            message: 'Password reset link has been sent to your email',
-            resetToken // Remove this in production
+            message: emailSent ? 
+                'Password reset link has been sent to your email' : 
+                'Password reset link generated (check console for URL)',
+            // The following would be removed in production
+            resetToken,
+            resetUrl
         });
     } catch (error) {
         console.error('Reset password error:', error);
         res.status(500).json({
             success: false,
             message: 'Error sending reset link'
+        });
+    }
+};
+
+// Complete password reset with token
+exports.completeReset = async (req, res) => {
+    try {
+        const { token, email, password } = req.body;
+        
+        if (!token || !email || !password) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token, email and password are required'
+            });
+        }
+        
+        // Verify token
+        let decoded;
+        try {
+            decoded = jwt.verify(token, process.env.JWT_SECRET);
+        } catch (err) {
+            return res.status(400).json({
+                success: false,
+                message: 'Invalid or expired token'
+            });
+        }
+        
+        // Find the teacher by email
+        const teacher = await Teacher.findOne({ email });
+        if (!teacher) {
+            return res.status(404).json({
+                success: false,
+                message: 'Teacher not found'
+            });
+        }
+        
+        // Verify token was issued for this teacher
+        if (decoded.id.toString() !== teacher._id.toString()) {
+            return res.status(400).json({
+                success: false,
+                message: 'Token is not valid for this user'
+            });
+        }
+        
+        // Hash the new password
+        const salt = await bcrypt.genSalt(10);
+        const hashedPassword = await bcrypt.hash(password, salt);
+        
+        // Update the password
+        teacher.password = hashedPassword;
+        await teacher.save();
+        
+        res.json({
+            success: true,
+            message: 'Password has been reset successfully'
+        });
+    } catch (error) {
+        console.error('Complete reset error:', error);
+        res.status(500).json({
+            success: false,
+            message: 'Error resetting password'
         });
     }
 };

@@ -77,7 +77,30 @@
             </div>
         </div>
 
-       
+       <!-- New Password Reset Section -->
+        <div id="passwordResetSection" class="form-container" style="display: none;">
+            <h1>Set New Password</h1>
+            <p class="form-description">Please enter your new password</p>
+            
+            <div class="reset-password-form">
+                <div class="form-group">
+                    <input type="password" id="newPassword" required>
+                    <label for="newPassword">New Password</label>
+                </div>
+                <div class="form-group">
+                    <input type="password" id="confirmPassword" required>
+                    <label for="confirmPassword">Confirm Password</label>
+                </div>
+                <button onclick="resetPassword()" class="submit-btn">
+                    <span>Update Password</span>
+                    <i class="fas fa-lock"></i>
+                </button>
+                <button onclick="backToLogin()" class="back-btn">
+                    <i class="fas fa-arrow-left"></i>
+                    <span>Back to Login</span>
+                </button>
+            </div>
+        </div>
         
         </div>
     </div>
@@ -375,10 +398,119 @@
 
 
 <script>
-    // Check if the user is already logged in
+    // Development mode toggle
+    const DEV_MODE = false; // Set to true for development, false for production
+    
+    // Base API URL based on mode
+    function getApiBaseUrl() {
+        return DEV_MODE ? 'http://localhost:5000/api' : 'https://api.dearsirhometuition.com/api';
+    }
+    
+    // Handle page initialization
     document.addEventListener('DOMContentLoaded', function() {
-        checkExistingLogin();
+        console.log('DOM content loaded, initializing...');
+        
+        // First check for reset token in URL (highest priority)
+        if (!checkForResetToken()) {
+            // If no reset token, then check login status
+            checkExistingLogin();
+        }
     });
+
+    // Function to check for reset token in URL
+    function checkForResetToken() {
+        console.log('Checking for reset token in URL...');
+        const urlParams = new URLSearchParams(window.location.search);
+        const token = urlParams.get('token');
+        const email = urlParams.get('email');
+        
+        console.log('URL parameters:', { 
+            hasToken: !!token, 
+            hasEmail: !!email,
+            rawUrl: window.location.href,
+            search: window.location.search
+        });
+        
+        if (token && email) {
+            console.log('Reset token found in URL, showing password reset form');
+            // Store token and email in session storage for the reset process
+            sessionStorage.setItem('resetToken', token);
+            sessionStorage.setItem('resetEmail', email);
+            showPasswordResetForm();
+            return true;
+        } else {
+            console.log('No reset token found in URL, showing login form');
+            showLoginForm();
+            return false;
+        }
+    }
+
+    // Function to show password reset form
+    function showPasswordResetForm() {
+        document.getElementById('loginSection').style.display = 'none';
+        document.getElementById('forgotPasswordSection').style.display = 'none';
+        document.getElementById('passwordResetSection').style.display = 'block';
+    }
+
+    // Function to reset password with token
+    async function resetPassword() {
+        const newPassword = document.getElementById('newPassword').value;
+        const confirmPassword = document.getElementById('confirmPassword').value;
+        const resetToken = sessionStorage.getItem('resetToken');
+        const resetEmail = sessionStorage.getItem('resetEmail');
+        
+        if (!newPassword || !confirmPassword) {
+            alert('Please enter and confirm your new password');
+            return;
+        }
+        
+        if (newPassword !== confirmPassword) {
+            alert('Passwords do not match');
+            return;
+        }
+        
+        if (newPassword.length < 6) {
+            alert('Password must be at least 6 characters long');
+            return;
+        }
+        
+        const resetBtn = document.querySelector('#passwordResetSection .submit-btn');
+        resetBtn.disabled = true;
+        resetBtn.innerHTML = '<span>Updating...</span><i class="fas fa-spinner fa-spin"></i>';
+        
+        try {
+            const response = await fetch(`${getApiBaseUrl()}/teacher-apply/complete-reset`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    token: resetToken,
+                    email: resetEmail,
+                    password: newPassword
+                })
+            });
+            
+            const data = await response.json();
+            
+            if (data.success) {
+                alert('Password has been reset successfully. Please login with your new password.');
+                // Clear session storage
+                sessionStorage.removeItem('resetToken');
+                sessionStorage.removeItem('resetEmail');
+                // Redirect to login page
+                showLoginForm();
+            } else {
+                alert(data.message || 'Failed to reset password. The link may have expired.');
+            }
+        } catch (error) {
+            console.error('Error resetting password:', error);
+            alert('Error resetting password. Please try again.');
+        } finally {
+            resetBtn.disabled = false;
+            resetBtn.innerHTML = '<span>Update Password</span><i class="fas fa-lock"></i>';
+        }
+    }
 
     // Function to check if user is already logged in
     async function checkExistingLogin() {
@@ -388,7 +520,7 @@
         try {
             console.log('Checking existing login token...');
             // Verify token is still valid
-            const response = await fetch('https://api.dearsirhometuition.com/api/teacher-apply/verify-token', {
+            const response = await fetch(`${getApiBaseUrl()}/teacher-apply/verify-token`, {
                 method: 'GET',
                 headers: {
                     'Authorization': `Bearer ${token}`,
@@ -421,19 +553,16 @@
         }
     }
 
-    window.onload = function() {
-        // Always show login form first
-        showLoginForm();
-    };
-
     function showLoginForm() {
         document.getElementById('loginSection').style.display = 'block';
         document.getElementById('forgotPasswordSection').style.display = 'none';
+        document.getElementById('passwordResetSection').style.display = 'none';
     }
 
     function showForgotPassword() {
         document.getElementById('loginSection').style.display = 'none';
         document.getElementById('forgotPasswordSection').style.display = 'block';
+        document.getElementById('passwordResetSection').style.display = 'none';
     }
 
     function backToLogin() {
@@ -458,7 +587,7 @@
         try {
             // First check if user is registered
             console.log('Checking if user is registered...');
-            const checkResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
+            const checkResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(email)}`);
             
             if (!checkResponse.ok) {
                 console.error('Registration check failed with status:', checkResponse.status);
@@ -476,7 +605,7 @@
 
             // Proceed with login if registered
             console.log('User is registered, attempting login...');
-            const loginResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/login`, {
+            const loginResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/login`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -554,7 +683,7 @@
 
         try {
             // Check if user is registered before sending reset link
-            const checkResponse = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
+            const checkResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
             const checkData = await checkResponse.json();
 
             if (!checkData.isRegistered) {
@@ -565,10 +694,11 @@
             }
 
             // Send reset password request
-            const response = await fetch(`https://api.dearsirhometuition.com/api/teacher-apply/reset-password`, {
+            const response = await fetch(`${getApiBaseUrl()}/teacher-apply/reset-password`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
+                    'X-Dev-Mode': DEV_MODE.toString() // Send development mode flag to backend
                 },
                 body: JSON.stringify({ email: resetEmail })
             });
@@ -577,6 +707,10 @@
 
             if (data.success) {
                 alert('Password reset link has been sent to your email');
+                if (DEV_MODE) {
+                    alert('Development mode: Check console for reset link');
+                    console.log('Reset link:', data.resetUrl);
+                }
                 backToLogin();
             } else {
                 alert(data.message || 'Error sending reset link');
