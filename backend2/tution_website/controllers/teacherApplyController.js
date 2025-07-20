@@ -260,7 +260,10 @@ exports.resetPasswordRequest = async (req, res) => {
             
             const msg = {
                 to: email,
-                from: emailConfig.sendgrid.fromEmail,
+                from: {
+                    email: emailConfig.sendgrid.fromEmail,
+                    name: "Dear Sir Home Tuition"
+                },
                 subject: 'Password Reset Request - Dear Sir Home Tuition',
                 html: `
                     <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; padding: 20px; border: 1px solid #e0e0e0; border-radius: 5px;">

@@ -9,11 +9,11 @@ module.exports = {
     
     // SendGrid configuration (preferred)
     sendgrid: {
-        apiKey: process.env.SENDGRID_API_KEY || 'your-sendgrid-api-key',
+        apiKey: process.env.SENDGRID_API_KEY,
         fromEmail: 'hi@dearsirhometuition.com', // This should be verified in SendGrid
     },
     
     // Application URLs
     frontendUrl: 'https://dearsirhometuition.com',
-    devFrontendUrl: 'http://localhost:3000'  // Use this for local development
+    devFrontendUrl: 'http://127.0.0.1:5500/Website/frontend3'  // Use this for local development
 };
