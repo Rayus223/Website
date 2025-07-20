@@ -403,7 +403,14 @@
     
     // Base API URL based on mode
     function getApiBaseUrl() {
-        return DEV_MODE ? 'http://localhost:5000/api' : 'https://api.dearsirhometuition.com/api';
+        if (DEV_MODE) {
+            return 'http://localhost:5000/api';
+        } else {
+            // For production, use the same domain or explicitly set the production API URL
+            const apiDomain = 'https://api.dearsirhometuition.com';
+            console.log('Using production API domain:', apiDomain);
+            return apiDomain + '/api';
+        }
     }
     
     // Handle page initialization
@@ -459,6 +466,14 @@
         const resetToken = sessionStorage.getItem('resetToken');
         const resetEmail = sessionStorage.getItem('resetEmail');
         
+        console.log('Resetting password for email:', resetEmail);
+        console.log('Has token:', !!resetToken);
+        
+        if (!resetToken || !resetEmail) {
+            alert('Missing reset information. Please try requesting a new password reset link.');
+            return;
+        }
+        
         if (!newPassword || !confirmPassword) {
             alert('Please enter and confirm your new password');
             return;
@@ -479,7 +494,10 @@
         resetBtn.innerHTML = '<span>Updating...</span><i class="fas fa-spinner fa-spin"></i>';
         
         try {
-            const response = await fetch(`${getApiBaseUrl()}/teacher-apply/complete-reset`, {
+            const apiUrl = `${getApiBaseUrl()}/teacher-apply/complete-reset`;
+            console.log('Sending password reset to:', apiUrl);
+            
+            const response = await fetch(apiUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -491,7 +509,15 @@
                 })
             });
             
+            if (!response.ok) {
+                const errorText = await response.text();
+                console.error('Password reset failed with status:', response.status);
+                console.error('Error response:', errorText);
+                throw new Error(`Server returned status ${response.status}`);
+            }
+            
             const data = await response.json();
+            console.log('Password reset response:', data);
             
             if (data.success) {
                 alert('Password has been reset successfully. Please login with your new password.');
@@ -505,7 +531,7 @@
             }
         } catch (error) {
             console.error('Error resetting password:', error);
-            alert('Error resetting password. Please try again.');
+            alert('Error resetting password: ' + error.message);
         } finally {
             resetBtn.disabled = false;
             resetBtn.innerHTML = '<span>Update Password</span><i class="fas fa-lock"></i>';
@@ -682,42 +708,79 @@
         resetBtn.innerHTML = '<span>Sending...</span><i class="fas fa-spinner fa-spin"></i>';
 
         try {
+            console.log('Sending reset link request for:', resetEmail);
+            console.log('Using API URL:', getApiBaseUrl());
+            
             // Check if user is registered before sending reset link
-            const checkResponse = await fetch(`${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`);
-            const checkData = await checkResponse.json();
+            try {
+                console.log('Checking if user is registered...');
+                const checkUrl = `${getApiBaseUrl()}/teacher-apply/check-registration?email=${encodeURIComponent(resetEmail)}`;
+                console.log('Check registration URL:', checkUrl);
+                
+                const checkResponse = await fetch(checkUrl);
+                
+                if (!checkResponse.ok) {
+                    throw new Error(`Registration check failed with status: ${checkResponse.status}`);
+                }
+                
+                const checkData = await checkResponse.json();
+                console.log('Registration check response:', checkData);
 
-            if (!checkData.isRegistered) {
-                alert('This email is not registered. Please sign up first.');
-                resetBtn.disabled = false;
-                resetBtn.innerHTML = '<span>Send Reset Link</span><i class="fas fa-paper-plane"></i>';
-                return;
+                if (!checkData.isRegistered) {
+                    alert('This email is not registered. Please sign up first.');
+                    resetBtn.disabled = false;
+                    resetBtn.innerHTML = '<span>Send Reset Link</span><i class="fas fa-paper-plane"></i>';
+                    return;
+                }
+            } catch (checkError) {
+                console.error('Error checking registration:', checkError);
+                alert('Error checking if email is registered. Please try again later.');
+                throw checkError;
             }
 
             // Send reset password request
-            const response = await fetch(`${getApiBaseUrl()}/teacher-apply/reset-password`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Dev-Mode': DEV_MODE.toString() // Send development mode flag to backend
-                },
-                body: JSON.stringify({ email: resetEmail })
-            });
-
-            const data = await response.json();
-
-            if (data.success) {
-                alert('Password reset link has been sent to your email');
-                if (DEV_MODE) {
-                    alert('Development mode: Check console for reset link');
-                    console.log('Reset link:', data.resetUrl);
+            try {
+                console.log('Sending reset password request...');
+                const resetUrl = `${getApiBaseUrl()}/teacher-apply/reset-password`;
+                console.log('Reset password URL:', resetUrl);
+                
+                const response = await fetch(resetUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-Dev-Mode': DEV_MODE.toString() // Send development mode flag to backend
+                    },
+                    body: JSON.stringify({ email: resetEmail })
+                });
+                
+                if (!response.ok) {
+                    const errorText = await response.text();
+                    console.error('Reset request failed with status:', response.status);
+                    console.error('Error details:', errorText);
+                    throw new Error(`Server returned status ${response.status}`);
                 }
-                backToLogin();
-            } else {
-                alert(data.message || 'Error sending reset link');
+                
+                const data = await response.json();
+                console.log('Reset password response:', data);
+
+                if (data.success) {
+                    alert('Password reset link has been sent to your email');
+                    if (DEV_MODE) {
+                        alert('Development mode: Check console for reset link');
+                        console.log('Reset link:', data.resetUrl);
+                    }
+                    backToLogin();
+                } else {
+                    alert(data.message || 'Error sending reset link');
+                }
+            } catch (resetError) {
+                console.error('Error sending reset request:', resetError);
+                alert('Error sending reset link. ' + resetError.message);
+                throw resetError;
             }
         } catch (error) {
-            console.error('Error:', error);
-            alert('Error sending reset link. Please try again.');
+            console.error('Error in reset process:', error);
+            // Error is already handled in the inner catch blocks
         } finally {
             resetBtn.disabled = false;
             resetBtn.innerHTML = '<span>Send Reset Link</span><i class="fas fa-paper-plane"></i>';
