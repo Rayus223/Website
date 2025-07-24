@@ -252,7 +252,6 @@ exports.resetPasswordRequest = async (req, res) => {
         
         // Track whether email was sent successfully
         let emailSent = false;
-        
         try {
             // Use SendGrid for email sending
             const sgMail = require('@sendgrid/mail');
