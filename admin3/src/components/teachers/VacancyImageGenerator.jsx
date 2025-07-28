@@ -109,7 +109,7 @@ const VacancyImageGenerator = ({ vacancy }) => {
             color: 'white',
             fontSize: '32px',
             fontWeight: 'bold',
-            width: '600px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
@@ -122,13 +122,13 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '185px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '700px',
+            width: '800px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
-            Location : {vacancy.location || 'Kapan, Baluwakhani Chowk'}
+            Location : {vacancy.location || 'Kathmandu'}
           </div>
           
           {/* Class/Grade text */}
@@ -137,13 +137,13 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '285px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '200px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
-            Class : {vacancy.class || '5'}
+            Class : {vacancy.class || 'N/A'}
           </div>
           
           {/* Salary text */}
@@ -152,13 +152,13 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '365px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '400px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
-            Salary : {vacancy.salary || '6 K / month'}
+            Salary : {vacancy.salary || 'Negotiable'}
           </div>
           
           {/* Time text */}
@@ -167,13 +167,13 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '455px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '400px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
-            Time : {vacancy.time || '1 hr after 5:00 (evening)'}
+            Time : {vacancy.time || '1 hr after 5:00PM'}
           </div>
           
           {/* Phone text */}
@@ -182,9 +182,9 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '545px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '500px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
@@ -197,9 +197,9 @@ const VacancyImageGenerator = ({ vacancy }) => {
             top: '655px',
             left: '15px',
             color: 'white',
-            fontSize: '34px',
+            fontSize: '32px',
             fontWeight: 'bold',
-            width: '500px',
+            width: '700px',
             zIndex: 2,
             textShadow: '1px 1px 2px rgba(0,0,0,0.3)'
           }}>
@@ -239,7 +239,7 @@ const VacancyImageGenerator = ({ vacancy }) => {
           }}>
             Send your CV via<br />
             WhatsApp<br />
-            {vacancy.phone || '9846722600'}
+            {vacancy.phone || '9765050000'}
           </div>
           
           {/* Vacancy NO text */}
