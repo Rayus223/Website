@@ -93,7 +93,7 @@ exports.getVacancies = async (req, res) => {
     
     const vacancies = await VacancyModel.find()
                 .sort({ createdAt: -1 })
-                .limit(150); 
+                .limit(100); 
     
     res.json({ vacancies });
   } catch (error) {
