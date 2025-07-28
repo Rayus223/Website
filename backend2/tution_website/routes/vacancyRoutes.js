@@ -65,7 +65,8 @@ router.get('/', async (req, res) => {
                 path: 'applications.teacher', 
                 select: '_id fullName email phone address subjects cv' 
             })
-            .sort({ createdAt: -1 });
+            .sort({ createdAt: -1 })
+            .limit(150); // Limit to 150 vacancies to improve performance
         
         // Ensure all applications have an explicit status (default to pending)
         const processedVacancies = vacancies.map(vacancy => {
@@ -79,7 +80,7 @@ router.get('/', async (req, res) => {
             return vacancyObj;
         });
         
-        console.log(`Found ${vacancies.length} vacancies`);
+        console.log(`Found ${vacancies.length} vacancies (limited to 150)`);
         res.json({
             success: true,
             data: processedVacancies
