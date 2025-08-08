@@ -93,7 +93,7 @@ exports.getVacancies = async (req, res) => {
     
     const vacancies = await VacancyModel.find()
                 .sort({ createdAt: -1 })
-                .limit(100); 
+                .limit(200); 
     
     res.json({ vacancies });
   } catch (error) {
@@ -163,3 +163,4 @@ exports.getTeachers = async (req, res) => {
         res.status(500).json({ message: 'Error fetching teachers' });
     }
 };
+
