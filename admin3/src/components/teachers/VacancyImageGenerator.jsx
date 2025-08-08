@@ -239,7 +239,7 @@ const VacancyImageGenerator = ({ vacancy }) => {
           }}>
             Send your CV via<br />
             WhatsApp<br />
-            {vacancy.phone || '9765050000'}
+            {vacancy.phone || '9846722600'}
           </div>
           
           {/* Vacancy NO text */}
