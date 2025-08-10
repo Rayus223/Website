@@ -66,7 +66,7 @@ router.get('/', async (req, res) => {
                 select: '_id fullName email phone address subjects cv' 
             })
             .sort({ createdAt: -1 })
-            .limit(200); // Limit to 100 vacancies to improve performance
+            .limit(310); // Limit to 100 vacancies to improve performance
 
 
         
@@ -671,4 +671,5 @@ router.post('/:vacancyId/admin-add-applicant', adminAuth, async (req, res) => {
 });
 
 module.exports = router;
+
 
