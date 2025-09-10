@@ -3846,8 +3846,6 @@ const budgetColumns = [
         try {
             // Format the vacancy details
             const formattedText = `
-Dear Sir Home Tuition - Vacancy
----------------------------
 *Title :* ${vacancy.title}
 *Subject :* ${vacancy.subject}
 *Class :* ${vacancy.class}
@@ -3855,8 +3853,6 @@ Dear Sir Home Tuition - Vacancy
 *Location :* ${vacancy.location}
 *Gender :* ${vacancy.gender === 'any' ? 'Any' : vacancy.gender.charAt(0).toUpperCase() + vacancy.gender.slice(1)}
 *Salary :* ${vacancy.salary}
-*Description :* ${vacancy.description}
-
 Apply now: https://dearsirhometuition.com/Apply/vacancy.html?id=${vacancy._id}
 `;
 
